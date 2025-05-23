@@ -1,0 +1,476 @@
+package gUI;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
+
+
+public class Captura extends JFrame implements ActionListener, KeyListener, FocusListener, MouseListener{
+
+     private static final long serialVersionUID = 1L;
+
+	private JButton btnLimpiar, btnGrabar, btnDelete;
+    public static JRadioButton RBModificar, RBNuevo, RBM, RBF;
+    
+   
+    /*     
+        artid int not null,
+        artnombre varchar( 50 ) not null, 
+        artdescripcion varchar( 500) not null,
+        artprecio numeric( 12,2) not null,
+        artTamaño char(1) not null, C,M,G
+        famid int not null  
+    */
+
+    //ARTICULO ATRIBUTOS
+    private JTextField txtArtId,txtArtNombre,txtArtDescripcion;
+	//private JTextFieldDecimal txtArtPrecio;
+    private JTextField txtArtPrecio;
+    private JComboBox<String> cbxArtFamID; 
+    ButtonGroup ArtTamaños = new ButtonGroup();
+    public static JRadioButton rdC,rdM,rdG;
+
+    public static JTable tblArticulos;
+    private DefaultTableModel tblModel; 
+    
+    public Captura() {
+		super("Captura");
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setSize(800,500);
+        setResizable(false);
+		setLocationRelativeTo(null);
+		InitComponents();
+	}
+
+    private void InitComponents(){
+        InitCaptura();
+    }
+    
+    private void InitCaptura() {
+    Color fondo = Color.decode("#d7e7eb");
+
+    // PANEL PRINCIPAL CENTRAL
+    JPanel pnlPrincipal = new JPanel(new BorderLayout());
+    pnlPrincipal.setBackground(fondo);
+
+    // TABLA DIRECTAMENTE EN EL PANEL PRINCIPAL
+    tblArticulos = new JTable();
+    tblArticulos.getTableHeader().setBackground(Color.decode("#133E87"));
+    tblArticulos.getTableHeader().setForeground(Color.WHITE);
+    tblArticulos.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+    tblArticulos.setFont(new Font("Arial", Font.PLAIN, 12));
+    JScrollPane scrollPane = new JScrollPane(tblArticulos);
+
+    // Panel auxiliar para margen
+    JPanel pnlTablaConMargen = new JPanel(new BorderLayout());
+    pnlTablaConMargen.setBackground(fondo);
+    pnlTablaConMargen.setBorder(new EmptyBorder(5, 5, 5, 5));
+    pnlTablaConMargen.add(scrollPane, BorderLayout.CENTER);
+
+    pnlPrincipal.add(pnlTablaConMargen, BorderLayout.CENTER);
+
+    // PANEL DERECHO: FORMULARIO Y BOTONES
+    JPanel pnlDerecha = new JPanel(new BorderLayout());
+    pnlDerecha.setBackground(fondo);
+
+    // Formulario arriba
+    JPanel pnlCentro = new JPanel();
+    pnlCentro.setLayout(new GridBagLayout());
+    pnlCentro.setBackground(fondo);
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.insets = new java.awt.Insets(5, 5, 5, 5);
+
+    // Configuración general
+    gbc.fill = GridBagConstraints.HORIZONTAL; // Expandir componentes horizontalmente
+    gbc.insets = new java.awt.Insets(5, 5, 5, 5);      // Márgenes (arriba, izquierda, abajo, derecha)
+
+        
+        // Fila 1 - ID ARTICULO
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.EAST; // Etiquetas alineadas a la derecha
+        pnlCentro.add(new JLabel("ArtID: ", JLabel.RIGHT), gbc);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST; // Campo alineado a la izquierda
+        txtArtId = new JTextField();
+        txtArtId.setPreferredSize(new Dimension(50, 20));
+        txtArtId.addFocusListener(this);
+        pnlCentro.add(txtArtId, gbc);
+
+        // Fila 2 - ARTICULO NOMBRE
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.EAST;
+        pnlCentro.add(new JLabel("Nombre: ", JLabel.RIGHT), gbc);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        txtArtNombre = new JTextField();
+        txtArtNombre.setPreferredSize(new Dimension(200, 20));
+        pnlCentro.add(txtArtNombre, gbc);
+
+        // Fila 3 - ARTICULO DESCRIPCION
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.EAST;
+        pnlCentro.add(new JLabel("Descripcion: ", JLabel.RIGHT), gbc);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        txtArtDescripcion = new JTextField();
+        txtArtDescripcion.setPreferredSize(new Dimension(200, 20));
+        pnlCentro.add(txtArtDescripcion, gbc);
+
+        // Fila 4 - ARTICULO PRECIO
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.EAST;
+        pnlCentro.add(new JLabel("Precio: ", JLabel.RIGHT), gbc);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        txtArtPrecio = new JTextField();
+        //txtArtPrecio = new JTextFieldDecimal(10,2); // Asegurar que está instanciado
+        txtArtPrecio.setPreferredSize(new Dimension(200, 20));
+        pnlCentro.add(txtArtPrecio, gbc);
+
+
+        // Fila 5 - ARTICULO TAMAÑO
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.anchor = GridBagConstraints.EAST;
+        pnlCentro.add(new JLabel("Tamaño: ", JLabel.RIGHT), gbc);
+
+       // Crear un panel para los radio buttons
+        gbc.gridx = 1;
+        JPanel pnlTamaño = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0)); // Espaciado entre botones
+        rdC = new JRadioButton("C");
+        rdC.setBackground(fondo);
+        rdC.setOpaque(false); // Elimina el recuadro gris
+
+        rdM = new JRadioButton("M");
+        rdM.setBackground(fondo);
+        rdM.setOpaque(false); // Elimina el recuadro gris
+
+        rdG = new JRadioButton("G");
+        rdG.setBackground(fondo);
+        rdG.setOpaque(false); // Elimina el recuadro gris
+
+        pnlTamaño.setBackground(fondo);
+        ArtTamaños.add(rdC);
+        ArtTamaños.add(rdM); 
+        ArtTamaños.add(rdG);
+        pnlTamaño.add(rdC);
+        pnlTamaño.add(rdM);
+        pnlTamaño.add(rdG);
+
+        gbc.anchor = GridBagConstraints.WEST;
+        pnlCentro.add(pnlTamaño, gbc);
+
+        // Fila 6 - ARTICULO FAMILIA
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.anchor = GridBagConstraints.EAST;
+        pnlCentro.add(new JLabel("Familia: ", JLabel.RIGHT), gbc);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        cbxArtFamID = new JComboBox<>();
+        cbxArtFamID.setPreferredSize(new Dimension(150, 20));
+        pnlCentro.add(cbxArtFamID, gbc);
+        cbxArtFamID.setEditable(false);
+
+        /* No se como agregaremos los tamaños de esto, si habra una tabla o algo
+        try {
+            cbxArtFamID.setModel(DBClientes.ListarTipos());
+        } 
+        catch (Exception e) {
+            e.getMessage();
+        }   
+        */
+
+        txtArtId.setBorder(null);
+        txtArtNombre.setBorder(null);
+        txtArtDescripcion.setBorder(null);
+        txtArtPrecio.setBorder(null);
+        cbxArtFamID.setBorder(null);
+
+        // PANEL INFERIOR DERECHO: BOTONES Y RADIOBUTTONS EN COLUMNA
+    JPanel pnlBotones = new JPanel(new GridLayout(0, 1, 0, 10)); // 1 columna, separación vertical de 10px
+    pnlBotones.setBackground(fondo);
+
+    // Panel para los radio buttons en una fila
+    JPanel pnlRadios = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+    pnlRadios.setBackground(fondo);
+    ButtonGroup group = new ButtonGroup();
+    RBNuevo = new JRadioButton("Nuevo");
+    RBNuevo.setBackground(fondo);
+    RBNuevo.addActionListener(this);
+    group.add(RBNuevo);
+    pnlRadios.add(RBNuevo);
+
+    RBModificar = new JRadioButton("Modificar");
+    RBModificar.setBackground(fondo);
+    RBModificar.addActionListener(this);
+    group.add(RBModificar);
+    pnlRadios.add(RBModificar);
+
+    // Agrega el panel de radio buttons como la primera fila
+    pnlBotones.add(pnlRadios);
+
+    // Botón Limpiar
+    btnLimpiar = new JButton("LIMPIAR");
+    btnLimpiar.setToolTipText("Limpiar campos");
+    btnLimpiar.addActionListener(this);
+    btnLimpiar.setBackground(Color.decode("#ECF2F9"));
+    pnlBotones.add(btnLimpiar);
+
+    // Botón Grabar
+    btnGrabar = new JButton("GRABAR");
+    btnGrabar.setToolTipText("Realiza el cambio en la tabla");
+    btnGrabar.addActionListener(this);
+    btnGrabar.setBackground(Color.decode("#ECF2F9"));
+    pnlBotones.add(btnGrabar);
+
+    // Botón Eliminar
+    btnDelete = new JButton("ELIMINAR ");
+    btnDelete.setToolTipText("Elimina el cliente seleccionado");
+    btnDelete.addActionListener(this);
+    btnDelete.addMouseListener(this);
+    btnDelete.setBackground(Color.decode("#ECF2F9"));
+    pnlBotones.add(btnDelete);
+
+    // Panel auxiliar para margen
+    JPanel pnlBotonesConMargen = new JPanel(new BorderLayout());
+    pnlBotonesConMargen.setBackground(fondo);
+    pnlBotonesConMargen.setBorder(new EmptyBorder(10, 10, 10, 10)); // top, left, bottom, right
+    pnlBotonesConMargen.add(pnlBotones, BorderLayout.CENTER);
+
+    // Panel para centrar verticalmente el contenido derecho
+    JPanel pnlDerechaContenido = new JPanel(new GridBagLayout());
+    pnlDerechaContenido.setBackground(fondo);
+    GridBagConstraints gbcDerecha = new GridBagConstraints();
+    gbcDerecha.gridx = 0;
+    gbcDerecha.gridy = 0;
+    gbcDerecha.anchor = GridBagConstraints.CENTER;
+    gbcDerecha.weighty = 1;
+    gbcDerecha.insets = new java.awt.Insets(0, 0, 10, 0);
+    pnlDerechaContenido.add(pnlCentro, gbcDerecha);
+
+    gbcDerecha.gridy = 1;
+    gbcDerecha.insets = new java.awt.Insets(10, 0, 0, 0);
+    pnlDerechaContenido.add(pnlBotonesConMargen, gbcDerecha);
+
+    // Agrega el panel centrado al centro del panel derecho
+    pnlDerecha.add(pnlDerechaContenido, BorderLayout.CENTER);
+
+    // Añadir paneles al principal
+    pnlPrincipal.add(pnlDerecha, BorderLayout.EAST); // Panel derecho a la derecha
+
+    // Añadir al frame
+    add(pnlPrincipal, BorderLayout.CENTER);
+}
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'mouseClicked'");
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // TODO Auto-generated method stub
+        Object source = e.getSource();
+        
+        if (source == btnLimpiar) {
+            // Limpiar campos
+            txtArtId.setText("");
+            txtArtNombre.setText("");
+            txtArtDescripcion.setText("");
+            txtArtPrecio.setText("");
+            cbxArtFamID.setSelectedIndex(-1); // Desmarca cualquier selección
+            ArtTamaños.clearSelection(); // Desmarca los radio buttons
+            return;
+        }
+        
+        if (source == RBNuevo) {
+            // Nuevo registro
+            txtArtId.setEnabled(true);
+            txtArtNombre.setEnabled(true);
+            txtArtDescripcion.setEnabled(true);
+            txtArtPrecio.setEnabled(true);
+            cbxArtFamID.setEnabled(true);
+            rdC.setEnabled(true);
+            rdM.setEnabled(true);
+            rdG.setEnabled(true);
+            
+            // Limpiar campos
+            txtArtId.setText("");
+            txtArtNombre.setText("");
+            txtArtDescripcion.setText("");
+            txtArtPrecio.setText("");
+            cbxArtFamID.setSelectedIndex(-1); // Desmarca cualquier selección
+            ArtTamaños.clearSelection(); // Desmarca los radio buttons
+        }
+        else if (source == RBModificar) {
+            // Modificar registro
+            int filaSeleccionada = tblArticulos.getSelectedRow();
+            if (filaSeleccionada != -1) {
+                txtArtId.setEnabled(false);
+                txtArtNombre.setEnabled(true);
+                txtArtDescripcion.setEnabled(true);
+                txtArtPrecio.setEnabled(true);
+                cbxArtFamID.setEnabled(true);
+                rdC.setEnabled(true);
+                rdM.setEnabled(true);
+                rdG.setEnabled(true);
+                
+                // Cargar datos en los campos
+                txtArtId.setText(tblArticulos.getValueAt(filaSeleccionada, 0).toString());
+                txtArtNombre.setText(tblArticulos.getValueAt(filaSeleccionada, 1).toString());
+                txtArtDescripcion.setText(tblArticulos.getValueAt(filaSeleccionada, 2).toString());
+                txtArtPrecio.setText(tblArticulos.getValueAt(filaSeleccionada, 3).toString());
+                
+                // Seleccionar familia
+                // cbxArtFamID.setSelectedItem(tblArticulos.getValueAt(filaSeleccionada, 5).toString());
+                cbxArtFamID.setSelectedIndex(-1); // Desmarca cualquier selección
+                
+                // Seleccionar tamaño
+                String tamaño = tblArticulos.getValueAt(filaSeleccionada, 4).toString();
+                ArtTamaños.clearSelection(); // Desmarca los radio buttons
+                if (tamaño.equals("C")) {
+                    rdC.setSelected(true);
+                } else if (tamaño.equals("M")) {
+                    rdM.setSelected(true);
+                } else if (tamaño.equals("G")) {
+                    rdG.setSelected(true);
+                }
+            } else {
+                // Mostrar mensaje de advertencia
+                javax.swing.JOptionPane.showMessageDialog(this, "Seleccione una fila para modificar.", "Advertencia", javax.swing.JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        // TODO Auto-generated method stub
+        Object source = e.getSource();
+        
+        if (source == txtArtId) {
+            // Limitar a números
+            if (!Character.isDigit(e.getKeyChar())) {
+                e.consume(); // Ignorar el evento de tecla
+            }
+        }
+        else if (source == txtArtPrecio) {
+            // Limitar a números y punto decimal
+            char c = e.getKeyChar();
+            if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE || c == '.')) {
+                e.consume();
+            }
+        }
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+        // TODO Auto-generated method stub
+        Object source = e.getSource();
+        
+        if (source == txtArtId) {
+            txtArtId.setBorder(javax.swing.BorderFactory.createLineBorder(Color.BLUE));
+        }
+        else if (source == txtArtNombre) {
+            txtArtNombre.setBorder(javax.swing.BorderFactory.createLineBorder(Color.BLUE));
+        }
+        else if (source == txtArtDescripcion) {
+            txtArtDescripcion.setBorder(javax.swing.BorderFactory.createLineBorder(Color.BLUE));
+        }
+        else if (source == txtArtPrecio) {
+            txtArtPrecio.setBorder(javax.swing.BorderFactory.createLineBorder(Color.BLUE));
+        }
+        else if (source == cbxArtFamID) {
+            cbxArtFamID.setBorder(javax.swing.BorderFactory.createLineBorder(Color.BLUE));
+        }
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
+        // TODO Auto-generated method stub
+        Object source = e.getSource();
+        
+        if (source == txtArtId) {
+            txtArtId.setBorder(null);
+        }
+        else if (source == txtArtNombre) {
+            txtArtNombre.setBorder(null);
+        }
+        else if (source == txtArtDescripcion) {
+            txtArtDescripcion.setBorder(null);
+        }
+        else if (source == txtArtPrecio) {
+            txtArtPrecio.setBorder(null);
+        }
+        else if (source == cbxArtFamID) {
+            cbxArtFamID.setBorder(null);
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        // TODO Auto-generated method stub
+    }
+}
