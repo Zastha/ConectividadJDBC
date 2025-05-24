@@ -1,12 +1,12 @@
 package gUI;
 import java.sql.Connection;
-import java.sql.ResultSet;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.Statement;
+
 import DataLayer.SelectDBLayer;
 
-import javax.swing.JOptionPane;
+
 import javax.swing.table.AbstractTableModel;
 
 public class ArticulosModel extends AbstractTableModel {
@@ -17,6 +17,18 @@ public class ArticulosModel extends AbstractTableModel {
         SelectDBLayer dbLayer = new SelectDBLayer(con);
         this.datos = dbLayer.getArticulos();
     }
+
+    public ArticulosModel(Connection con, int id){
+        SelectDBLayer dbLayer = new SelectDBLayer(con);
+        this.datos.add(dbLayer.getArticuloID(id));
+
+    }
+
+    public ArticulosModel(Connection con, String fam){
+        SelectDBLayer dbLayer = new SelectDBLayer(con);
+        this.datos = dbLayer.getArticuloFam(fam);
+
+    } 
 
 
     public String determineSize(String tam){
@@ -38,8 +50,12 @@ public class ArticulosModel extends AbstractTableModel {
 
     }
 
-    public void consultaEspecifica(){
+    public void consultaID(){
+        
+    }
 
+    public void consultaFam(){
+        
     }
 
     @Override

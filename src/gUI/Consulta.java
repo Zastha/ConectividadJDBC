@@ -9,9 +9,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
 
-import DataLayer.ConnectDBLayer;
 import DataLayer.SelectDBLayer;
 
 public class Consulta extends JFrame implements ActionListener, KeyListener, FocusListener, MouseListener, ListSelectionListener {
@@ -21,7 +19,7 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
     ButtonGroup ArtTamaños = new ButtonGroup();
     public static JRadioButton rdC, rdM, rdG;
     public static JTable tblArticulos;
-    private DefaultTableModel tblModel;
+
 
     private JButton btnBuscar;
     private JComboBox<String> cbxArtFamID;
@@ -175,9 +173,11 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
         cbxArtFamID.setEditable(false);
         SelectDBLayer dbLayer = new SelectDBLayer(conexionDB);
         ArrayList<String> familias = dbLayer.getListaFamilias();
+        cbxArtFamID.addItem("");
         for (String fam : familias) {
         cbxArtFamID.addItem(fam);
 }
+        
 
         txtArtId.setBorder(null);
         txtArtNombre.setBorder(null);
@@ -256,7 +256,46 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // Implementa la lógica de los botones aquí
+        if(e.getSource() == btnBuscar){
+            if(!txtArtId.getText().isEmpty()){
+
+                if(cbxArtFamID.getSelectedItem().toString().isEmpty()){
+                    selectID(Integer.parseInt(txtArtId.getText()));
+                
+                    
+                }else{
+                    JOptionPane.showMessageDialog(this, "Solo se permite utilizar un parametro de busqueda", "Comprobar Borrado", JOptionPane.ERROR_MESSAGE);
+                }
+
+            }else if(!cbxArtFamID.getSelectedItem().toString().isEmpty()){
+            selectFamID(cbxArtFamID.getSelectedItem().toString());
+
+            }
+
+        }
+    }
+
+    public void selectID(int id){
+        ArticulosModel jtArticulos = new ArticulosModel(conexionDB, id);
+        tblArticulos.setModel(jtArticulos); // Cambia el modelo de la tabla existente
+        tblArticulos.getSelectionModel().addListSelectionListener(this);
+        actualizarTxtField(0);
+         
+       repaint();
+    
+
+        
+
+    }
+
+    public void selectFamID(String familia){
+        ArticulosModel jtArticulos = new ArticulosModel(conexionDB, familia);
+        tblArticulos.setModel(jtArticulos); // Cambia el modelo de la tabla existente
+        tblArticulos.getSelectionModel().addListSelectionListener(this);
+         
+       repaint();
+    
+
     }
 
     @Override
@@ -327,4 +366,5 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
           repaint();
 
     }
+
 }
