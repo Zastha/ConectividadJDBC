@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -31,6 +33,7 @@ public class DlgConfig extends JDialog implements ActionListener{
 
     Consulta VentConsulta;
     Captura VentCaptura;
+	Connection con;
 
     public DlgConfig(JFrame marco, boolean nuevo) {
 		super(marco,"Login");
@@ -160,14 +163,21 @@ public class DlgConfig extends JDialog implements ActionListener{
         }
 	
 		if (e.getSource() == btnConsulta) {
-			VentConsulta = new Consulta();
-			VentConsulta.setVisible(true);
+			if(exitoso){
+				
+				VentConsulta = new Consulta(con);
+				VentConsulta.setVisible(true);
+			}
+		
 			
 		}
 	
 		if (e.getSource() == btnCaptura) {
-			VentCaptura = new Captura();
+			if(exitoso){
+				VentCaptura = new Captura(con);
 			VentCaptura.setVisible(true);
+			}
+			
 		}
     }
 
@@ -181,6 +191,11 @@ public class DlgConfig extends JDialog implements ActionListener{
             ConnectDBLayer conexion = new ConnectDBLayer(servidor, DB, usuario,contra);
             int estado = conexion.getEstado();
             mostrarRespuestaConexion(estado);
+			if (estado==999){
+				con = conexion.getConexion();
+				exitoso =true;
+				System.out.println(con);
+			}
         }else{
 
 					JOptionPane.showMessageDialog( 

@@ -16,6 +16,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.sql.Connection;
+
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -28,6 +30,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
+import DataLayer.ConnectDBLayer;
 
 
 
@@ -58,14 +62,16 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
 
     public static JTable tblArticulos;
     private DefaultTableModel tblModel; 
+    Connection con;
     
-    public Captura() {
+    public Captura(Connection con) {
 		super("Captura");
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setSize(800,500);
         setResizable(false);
 		setLocationRelativeTo(null);
 		InitComponents();
+        this.con=con;
 	}
 
     private void InitComponents(){

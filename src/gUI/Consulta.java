@@ -2,9 +2,13 @@ package gUI;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.Connection;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
+import DataLayer.ConnectDBLayer;
 
 public class Consulta extends JFrame implements ActionListener, KeyListener, FocusListener, MouseListener {
 
@@ -19,14 +23,18 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
     private JComboBox<String> cbxArtFamID;
     private JTextField txtArtId, txtArtNombre, txtArtDescripcion, txtArtPrecio;
 
-    public Consulta() {
+    Connection conexionDB;
+
+    public Consulta(Connection con) {
         super("Consulta");
+          conexionDB =con;
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(800, 500);
         setResizable(false);
         setLocationRelativeTo(null);
         InitComponents();
         setVisible(true);
+      
     }
 
     private void InitComponents() {
@@ -41,7 +49,8 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
         pnlPrincipal.setBackground(fondo);
 
         // TABLA DIRECTAMENTE EN EL PANEL PRINCIPAL
-        tblArticulos = new JTable();
+        ArticulosModel jtAriculos = new ArticulosModel(conexionDB);
+        tblArticulos = new JTable(jtAriculos);
         tblArticulos.getTableHeader().setBackground(Color.decode("#133E87"));
         tblArticulos.getTableHeader().setForeground(Color.WHITE);
         tblArticulos.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
