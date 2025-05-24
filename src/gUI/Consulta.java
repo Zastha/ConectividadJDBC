@@ -276,12 +276,15 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
     }
 
     public void selectID(int id){
-        ArticulosModel jtArticulos = new ArticulosModel(conexionDB, id);
-        tblArticulos.setModel(jtArticulos); // Cambia el modelo de la tabla existente
-        tblArticulos.getSelectionModel().addListSelectionListener(this);
-        actualizarTxtField(0);
-         
-       repaint();
+    ArticulosModel jtArticulos = new ArticulosModel(conexionDB, id);
+    if (jtArticulos.getRowCount() == 0) {
+        JOptionPane.showMessageDialog(this, "El artículo con ese ID no existe.", "No encontrado", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    tblArticulos.setModel(jtArticulos);
+    tblArticulos.getSelectionModel().addListSelectionListener(this);
+    actualizarTxtField(0);
+    repaint();
     
 
         

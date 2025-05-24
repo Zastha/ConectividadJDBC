@@ -20,7 +20,10 @@ public class ArticulosModel extends AbstractTableModel {
 
     public ArticulosModel(Connection con, int id){
         SelectDBLayer dbLayer = new SelectDBLayer(con);
-        this.datos.add(dbLayer.getArticuloID(id));
+            Object[] articulo = dbLayer.getArticuloID(id);
+        if (articulo != null) {
+        this.datos.add(articulo);
+    }
 
     }
 
