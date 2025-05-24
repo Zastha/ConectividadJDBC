@@ -66,12 +66,13 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
     
     public Captura(Connection con) {
 		super("Captura");
+         this.con=con;
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setSize(800,500);
         setResizable(false);
 		setLocationRelativeTo(null);
 		InitComponents();
-        this.con=con;
+       
 	}
 
     private void InitComponents(){

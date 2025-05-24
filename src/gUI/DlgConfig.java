@@ -194,7 +194,7 @@ public class DlgConfig extends JDialog implements ActionListener{
 			if (estado==999){
 				con = conexion.getConexion();
 				exitoso =true;
-				System.out.println(con);
+				
 			}
         }else{
 
