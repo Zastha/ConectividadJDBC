@@ -3,14 +3,18 @@ package gUI;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.Connection;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import DataLayer.ConnectDBLayer;
+import DataLayer.SelectDBLayer;
 
-public class Consulta extends JFrame implements ActionListener, KeyListener, FocusListener, MouseListener {
+public class Consulta extends JFrame implements ActionListener, KeyListener, FocusListener, MouseListener, ListSelectionListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -51,6 +55,9 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
         // TABLA DIRECTAMENTE EN EL PANEL PRINCIPAL
         ArticulosModel jtAriculos = new ArticulosModel(conexionDB);
         tblArticulos = new JTable(jtAriculos);
+
+        tblArticulos.getSelectionModel().addListSelectionListener(this);
+
         tblArticulos.getTableHeader().setBackground(Color.decode("#133E87"));
         tblArticulos.getTableHeader().setForeground(Color.WHITE);
         tblArticulos.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
@@ -129,14 +136,18 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
         rdC = new JRadioButton("C");
         rdC.setBackground(fondo);
         rdC.setOpaque(false);
+        rdC.setEnabled(false);
+        
 
         rdM = new JRadioButton("M");
         rdM.setBackground(fondo);
         rdM.setOpaque(false);
+        rdM.setEnabled(false);
 
         rdG = new JRadioButton("G");
         rdG.setBackground(fondo);
         rdG.setOpaque(false);
+        rdG.setEnabled(false);
 
         pnlTamaño.setBackground(fondo);
         ArtTamaños.add(rdC);
@@ -158,15 +169,38 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         cbxArtFamID = new JComboBox<>();
+       
         cbxArtFamID.setPreferredSize(new Dimension(150, 20));
         pnlCentro.add(cbxArtFamID, gbc);
         cbxArtFamID.setEditable(false);
+        SelectDBLayer dbLayer = new SelectDBLayer(conexionDB);
+        ArrayList<String> familias = dbLayer.getListaFamilias();
+        for (String fam : familias) {
+        cbxArtFamID.addItem(fam);
+}
 
         txtArtId.setBorder(null);
         txtArtNombre.setBorder(null);
         txtArtDescripcion.setBorder(null);
         txtArtPrecio.setBorder(null);
         cbxArtFamID.setBorder(null);
+
+        //deshabilitar los campos sin consulta
+        txtArtNombre.setEnabled(false);
+        txtArtDescripcion.setEnabled(false);
+        txtArtPrecio.setEnabled(false);
+
+        // Cambia el fondo para que se vean más oscuras cuando están deshabilitadas
+        Color disabledBg = new Color(180, 180, 180); // Puedes ajustar el tono
+        txtArtNombre.setDisabledTextColor(Color.BLACK);
+        txtArtNombre.setBackground(disabledBg);
+
+        txtArtDescripcion.setDisabledTextColor(Color.BLACK);
+        txtArtDescripcion.setBackground(disabledBg);
+
+        txtArtPrecio.setDisabledTextColor(Color.BLACK);
+        txtArtPrecio.setBackground(disabledBg);
+
 
         // PANEL INFERIOR DERECHO: BOTONES Y RADIOBUTTONS EN COLUMNA
         JPanel pnlBotones = new JPanel(new GridLayout(0, 1, 0, 10));
@@ -254,4 +288,43 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
 
     @Override
     public void mouseExited(MouseEvent e) {}
+
+    @Override
+    public void valueChanged(ListSelectionEvent e) {
+        int selectedRowCount = tblArticulos.getSelectedRow();
+        actualizarTxtField(selectedRowCount);
+
+      
+    }
+
+    public void actualizarTxtField(int filaSelect){
+        int id = (int) tblArticulos.getValueAt(filaSelect, 0);
+        txtArtId.setText(String.valueOf(id));
+        
+        String nombre = (String) tblArticulos.getValueAt(filaSelect, 1);
+        txtArtNombre.setText(String.valueOf(nombre));
+
+        String descripcion = (String) tblArticulos.getValueAt(filaSelect, 2);
+        txtArtDescripcion.setText(String.valueOf(descripcion));
+
+        double precio = (double) tblArticulos.getValueAt(filaSelect, 3);
+        txtArtPrecio.setText(String.valueOf(precio));
+
+        String size = (String) tblArticulos.getValueAt(filaSelect, 4);
+        if(size.charAt(0)=='C'){
+            rdC.setSelected(true);
+        }else if(size.charAt(0)=='M'){
+            rdM.setSelected(true);
+        }else if(size.charAt(0)=='G'){
+            rdG.setSelected(true);
+        }
+        
+
+        String familia = (String) tblArticulos.getValueAt(filaSelect, 5);
+        cbxArtFamID.setSelectedItem(familia);
+        
+
+          repaint();
+
+    }
 }

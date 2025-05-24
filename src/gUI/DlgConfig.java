@@ -144,6 +144,12 @@ public class DlgConfig extends JDialog implements ActionListener{
 		btnConectar.setMargin(new Insets(10, 5, 10, 5));
 		btnCaptura.setMargin(new Insets(10, 5, 10, 5));
 		btnConsulta.setMargin(new Insets(10, 5, 10, 5));
+
+		//Perfil con permisos para facilitar pruebas
+		txtServidor.setText("MSI");
+		txtBD.setText("Ventas");
+		txtUsuario.setText("Mark");
+		txtContra.setText("123");
     }
     
     @Override
