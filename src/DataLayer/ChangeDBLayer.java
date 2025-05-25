@@ -17,20 +17,25 @@ public class ChangeDBLayer {
 
     }
 
-    public void execProc(){
-        String sql = "EXEC sp_MttoArticulos @artID=?, @artnombre=?, @artdescripcion=?, @artprecio=?, @arttamaño=?, @famid=?";
-        try (java.sql.PreparedStatement pst = con.prepareStatement(sql)) {
-            pst.setString(1, valores[0]);
-            pst.setString(2, valores[1]);
-            pst.setString(3, valores[2]);
-            pst.setString(4, valores[3]);
-            pst.setString(5, valores[4]);
-            pst.setString(6, valores[5]);
+    public void execProc() {
+        String sql = "{call sp_MttoArticulos(?, ?, ?, ?, ?, ?)}";
+        try (java.sql.CallableStatement cst = con.prepareCall(sql)) {
+            cst.setString(1, valores[0]); 
+            cst.setString(2, valores[1]);
+            cst.setString(3, valores[2]);
+            cst.setString(4, valores[3]);
+            cst.setString(5, valores[4]);
+            cst.setString(6, valores[5]);
 
-            int rowsAffected = pst.executeUpdate();
+          
+            cst.registerOutParameter(1, java.sql.Types.INTEGER);
+
+            int rowsAffected = cst.executeUpdate();
+
+            int idGenerado = cst.getInt(1);
 
             if (rowsAffected > 0) {
-                javax.swing.JOptionPane.showMessageDialog(null, "Operación exitosa. Filas afectadas: " + rowsAffected, "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                javax.swing.JOptionPane.showMessageDialog(null, "Operación exitosa. ID afectado: " + idGenerado, "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
             } else {
                 javax.swing.JOptionPane.showMessageDialog(null, "No se realizaron cambios.", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
             }

@@ -36,9 +36,13 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
+import DataLayer.ChangeDBLayer;
+import DataLayer.ConnectDBLayer;
+import DataLayer.SelectDBLayer;
 
 
-public class Captura extends JFrame implements ActionListener, KeyListener, FocusListener, MouseListener, ListSelectionListener{
+
+public class Captura extends JFrame implements ActionListener, KeyListener, FocusListener, ListSelectionListener{
 
      private static final long serialVersionUID = 1L;
 
@@ -281,7 +285,6 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
     btnDelete = new JButton("ELIMINAR ");
     btnDelete.setToolTipText("Elimina el cliente seleccionado");
     btnDelete.addActionListener(this);
-    btnDelete.addMouseListener(this);
     btnDelete.setBackground(Color.decode("#ECF2F9"));
     btnDelete.setEnabled(false);
     pnlBotones.add(btnDelete);
@@ -317,11 +320,7 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
     add(pnlPrincipal, BorderLayout.CENTER);
 }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'mouseClicked'");
-    }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -382,6 +381,8 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
             } else {
                 JOptionPane.showMessageDialog(this, "Seleccione una fila para modificar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             }
+
+
         }
 
         if(source == btnGrabar){
@@ -423,12 +424,31 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
                 "Error", JOptionPane.ERROR_MESSAGE);
 				
          }
-            
-            
-
-
 
         }
+
+        
+         if(source == btnDelete){
+            if(txtArtId.getText().isEmpty()){
+                JOptionPane.showMessageDialog( 
+                null, "Indique el ID del Articulo que desea borrar", 
+                "Error", JOptionPane.ERROR_MESSAGE);
+            }else{
+                int id;
+
+                try{
+                    id = Integer.parseInt(txtArtId.getText());
+                    DeleteDBLayer deleteLayer = new DeleteDBLayer(conexionDB, id);
+                    dibujarTabla();
+                }catch(NumberFormatException exc){
+                    JOptionPane.showMessageDialog( 
+                null, "Ingrese un ID Valido", 
+                "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
+            }
+         }
+           
     }
     public boolean comprobarCamposLlenos() {
         
@@ -549,26 +569,6 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
         else if (source == cbxArtFamID) {
             cbxArtFamID.setBorder(null);
         }
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        // TODO Auto-generated method stub
     }
 
     @Override
