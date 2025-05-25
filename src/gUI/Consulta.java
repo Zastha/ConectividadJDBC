@@ -252,6 +252,23 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
         pnlPrincipal.add(pnlDerecha, BorderLayout.EAST);
 
         add(pnlPrincipal, BorderLayout.CENTER);
+
+        //lo siento rene :(
+        txtArtId.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                tblArticulos.clearSelection();
+                tblArticulos.repaint();
+            }
+        });
+
+        cbxArtFamID.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                tblArticulos.clearSelection();
+                tblArticulos.repaint();
+            }
+        });
     }
 
     @Override
@@ -355,8 +372,9 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
     @Override
     public void valueChanged(ListSelectionEvent e) {
         int selectedRowCount = tblArticulos.getSelectedRow();
-        actualizarTxtField(selectedRowCount);
-
+        if (selectedRowCount >= 0) {
+            actualizarTxtField(selectedRowCount);
+        }
     }
 
     public void actualizarTxtField(int filaSelect) {
