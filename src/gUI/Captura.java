@@ -1,5 +1,7 @@
 package gUI;
 
+import DataLayer.ChangeDBLayer;
+import DataLayer.SelectDBLayer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -18,7 +20,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.util.ArrayList;
-
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -34,10 +35,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-
-import DataLayer.ChangeDBLayer;
-import DataLayer.ConnectDBLayer;
-import DataLayer.SelectDBLayer;
 
 
 
@@ -116,160 +113,155 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
     gbc.fill = GridBagConstraints.HORIZONTAL;
     gbc.insets = new java.awt.Insets(5, 5, 5, 5);
 
-    // Configuración general
-    gbc.fill = GridBagConstraints.HORIZONTAL; // Expandir componentes horizontalmente
-    gbc.insets = new java.awt.Insets(5, 5, 5, 5);      // Márgenes (arriba, izquierda, abajo, derecha)
-
-        
-        // Fila 1 - ID ARTICULO
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.EAST; // Etiquetas alineadas a la derecha
-        pnlCentro.add(new JLabel("ArtID: ", JLabel.RIGHT), gbc);
-
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.WEST; // Campo alineado a la izquierda
-        txtArtId = new JTextField();
-        txtArtId.setPreferredSize(new Dimension(50, 20));
-        txtArtId.setHorizontalAlignment(JTextField.CENTER);
-
-
-        txtArtId.addFocusListener(this);
-        pnlCentro.add(txtArtId, gbc);
-
-        // Fila 2 - ARTICULO NOMBRE
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.anchor = GridBagConstraints.EAST;
-        pnlCentro.add(new JLabel("Nombre: ", JLabel.RIGHT), gbc);
-
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        txtArtNombre = new JTextField();
-        txtArtNombre.setPreferredSize(new Dimension(200, 20));
-        pnlCentro.add(txtArtNombre, gbc);
-
-        // Fila 3 - ARTICULO DESCRIPCION
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.anchor = GridBagConstraints.EAST;
-        pnlCentro.add(new JLabel("Descripcion: ", JLabel.RIGHT), gbc);
-
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        txtArtDescripcion = new JTextField();
-        txtArtDescripcion.setPreferredSize(new Dimension(200, 20));
-        pnlCentro.add(txtArtDescripcion, gbc);
-
-        // Fila 4 - ARTICULO PRECIO
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.anchor = GridBagConstraints.EAST;
-        pnlCentro.add(new JLabel("Precio: ", JLabel.RIGHT), gbc);
-
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        txtArtPrecio = new JTextField();
-        //txtArtPrecio = new JTextFieldDecimal(10,2); // Asegurar que está instanciado
-        txtArtPrecio.setPreferredSize(new Dimension(200, 20));
-        pnlCentro.add(txtArtPrecio, gbc);
-
-
-        // Fila 5 - ARTICULO TAMAÑO
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        gbc.anchor = GridBagConstraints.EAST;
-        pnlCentro.add(new JLabel("Tamaño: ", JLabel.RIGHT), gbc);
-
-       // Crear un panel para los radio buttons
-        gbc.gridx = 1;
-        JPanel pnlTamaño = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0)); // Espaciado entre botones
-        rdC = new JRadioButton("C");
-        rdC.setBackground(fondo);
-        rdC.setOpaque(false); // Elimina el recuadro gris
-
-        rdM = new JRadioButton("M");
-        rdM.setBackground(fondo);
-        rdM.setOpaque(false); // Elimina el recuadro gris
-
-        rdG = new JRadioButton("G");
-        rdG.setBackground(fondo);
-        rdG.setOpaque(false); // Elimina el recuadro gris
-
-        pnlTamaño.setBackground(fondo);
-        ArtTamaños.add(rdC);
-        ArtTamaños.add(rdM); 
-        ArtTamaños.add(rdG);
-        pnlTamaño.add(rdC);
-        pnlTamaño.add(rdM);
-        pnlTamaño.add(rdG);
-
-        gbc.anchor = GridBagConstraints.WEST;
-        pnlCentro.add(pnlTamaño, gbc);
-
-        // Fila 6 - ARTICULO FAMILIA
-        gbc.gridx = 0;
-        gbc.gridy = 5;
-        gbc.anchor = GridBagConstraints.EAST;
-        pnlCentro.add(new JLabel("Familia: ", JLabel.RIGHT), gbc);
-
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        cbxArtFamID = new JComboBox<>();
-
-        cbxArtFamID.setPreferredSize(new Dimension(150, 20));
-        pnlCentro.add(cbxArtFamID, gbc);
-        cbxArtFamID.setEditable(false);
-        SelectDBLayer dbLayer = new SelectDBLayer(conexionDB);
-        ArrayList<String> familias = dbLayer.getListaFamilias();
-        cbxArtFamID.addItem("");
-        for (String fam : familias) {
-            cbxArtFamID.addItem(fam);
-        }
-
-        txtArtId.setBorder(null);
-        txtArtNombre.setBorder(null);
-        txtArtDescripcion.setBorder(null);
-        txtArtPrecio.setBorder(null);
-        cbxArtFamID.setBorder(null);
-
-        /* No se como agregaremos los tamaños de esto, si habra una tabla o algo
-        try {
-            cbxArtFamID.setModel(DBClientes.ListarTipos());
-        } 
-        catch (Exception e) {
-            e.getMessage();
-        }   
-        */
-
-        txtArtId.setBorder(null);
-        txtArtNombre.setBorder(null);
-        txtArtDescripcion.setBorder(null);
-        txtArtPrecio.setBorder(null);
-        cbxArtFamID.setBorder(null);
-
-        // PANEL INFERIOR DERECHO: BOTONES Y RADIOBUTTONS EN COLUMNA
-    JPanel pnlBotones = new JPanel(new GridLayout(0, 1, 0, 10)); // 1 columna, separación vertical de 10px
-    pnlBotones.setBackground(fondo);
-
-    // Panel para los radio buttons en una fila
-    JPanel pnlRadios = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
-    pnlRadios.setBackground(fondo);
+    // === AGREGAR RADIO BUTTONS ARRIBA ===
     ButtonGroup group = new ButtonGroup();
     RBNuevo = new JRadioButton("Nuevo");
     RBNuevo.setBackground(fondo);
     RBNuevo.addActionListener(this);
     group.add(RBNuevo);
-    pnlRadios.add(RBNuevo);
 
     RBModificar = new JRadioButton("Modificar");
     RBModificar.setBackground(fondo);
     RBModificar.addActionListener(this);
     group.add(RBModificar);
-    pnlRadios.add(RBModificar);
 
-    // Agrega el panel de radio buttons como la primera fila
-    pnlBotones.add(pnlRadios);
+    JPanel pnlRadiosArriba = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+    pnlRadiosArriba.setBackground(fondo);
+    pnlRadiosArriba.add(RBNuevo);
+    pnlRadiosArriba.add(RBModificar);
+
+    // Agrega el panel de radio buttons en la primera fila
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.gridwidth = 2;
+    gbc.anchor = GridBagConstraints.WEST;
+    pnlCentro.add(pnlRadiosArriba, gbc);
+
+    // === AHORA LOS CAMPOS EMPIEZAN EN LA FILA 1 ===
+    gbc.gridwidth = 1;
+
+    // Fila 1 - ID ARTICULO
+    gbc.gridx = 0;
+    gbc.gridy = 1;
+    gbc.anchor = GridBagConstraints.EAST; // Etiquetas alineadas a la derecha
+    pnlCentro.add(new JLabel("ArtID: ", JLabel.RIGHT), gbc);
+
+    gbc.gridx = 1;
+    gbc.anchor = GridBagConstraints.WEST; // Campo alineado a la izquierda
+    txtArtId = new JTextField();
+    txtArtId.setPreferredSize(new Dimension(50, 20));
+    txtArtId.setHorizontalAlignment(JTextField.CENTER);
+    txtArtId.addFocusListener(this);
+    pnlCentro.add(txtArtId, gbc);
+
+    // Fila 2 - ARTICULO NOMBRE
+    gbc.gridx = 0;
+    gbc.gridy = 2;
+    gbc.anchor = GridBagConstraints.EAST;
+    pnlCentro.add(new JLabel("Nombre: ", JLabel.RIGHT), gbc);
+
+    gbc.gridx = 1;
+    gbc.anchor = GridBagConstraints.WEST;
+    txtArtNombre = new JTextField();
+    txtArtNombre.setPreferredSize(new Dimension(200, 20));
+    pnlCentro.add(txtArtNombre, gbc);
+
+    // Fila 3 - ARTICULO DESCRIPCION
+    gbc.gridx = 0;
+    gbc.gridy = 3;
+    gbc.anchor = GridBagConstraints.EAST;
+    pnlCentro.add(new JLabel("Descripcion: ", JLabel.RIGHT), gbc);
+
+    gbc.gridx = 1;
+    gbc.anchor = GridBagConstraints.WEST;
+    txtArtDescripcion = new JTextField();
+    txtArtDescripcion.setPreferredSize(new Dimension(200, 20));
+    pnlCentro.add(txtArtDescripcion, gbc);
+
+    // Fila 4 - ARTICULO PRECIO
+    gbc.gridx = 0;
+    gbc.gridy = 4;
+    gbc.anchor = GridBagConstraints.EAST;
+    pnlCentro.add(new JLabel("Precio: ", JLabel.RIGHT), gbc);
+
+    gbc.gridx = 1;
+    gbc.anchor = GridBagConstraints.WEST;
+    txtArtPrecio = new JTextField();
+    //txtArtPrecio = new JTextFieldDecimal(10,2); // Asegurar que está instanciado
+    txtArtPrecio.setPreferredSize(new Dimension(200, 20));
+    pnlCentro.add(txtArtPrecio, gbc);
+
+
+    // Fila 5 - ARTICULO TAMAÑO
+    gbc.gridx = 0;
+    gbc.gridy = 5;
+    gbc.anchor = GridBagConstraints.EAST;
+    pnlCentro.add(new JLabel("Tamaño: ", JLabel.RIGHT), gbc);
+
+   // Crear un panel para los radio buttons
+    gbc.gridx = 1;
+    JPanel pnlTamaño = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0)); // Espaciado entre botones
+    rdC = new JRadioButton("C");
+    rdC.setBackground(fondo);
+    rdC.setOpaque(false); // Elimina el recuadro gris
+
+    rdM = new JRadioButton("M");
+    rdM.setBackground(fondo);
+    rdM.setOpaque(false); // Elimina el recuadro gris
+
+    rdG = new JRadioButton("G");
+    rdG.setBackground(fondo);
+    rdG.setOpaque(false); // Elimina el recuadro gris
+
+    pnlTamaño.setBackground(fondo);
+    ArtTamaños.add(rdC);
+    ArtTamaños.add(rdM); 
+    ArtTamaños.add(rdG);
+    pnlTamaño.add(rdC);
+    pnlTamaño.add(rdM);
+    pnlTamaño.add(rdG);
+
+    gbc.anchor = GridBagConstraints.WEST;
+    pnlCentro.add(pnlTamaño, gbc);
+
+    // Fila 6 - ARTICULO FAMILIA
+    gbc.gridx = 0;
+    gbc.gridy = 6;
+    gbc.anchor = GridBagConstraints.EAST;
+    pnlCentro.add(new JLabel("Familia: ", JLabel.RIGHT), gbc);
+
+    gbc.gridx = 1;
+    gbc.anchor = GridBagConstraints.WEST;
+    cbxArtFamID = new JComboBox<>();
+
+    cbxArtFamID.setPreferredSize(new Dimension(150, 20));
+    pnlCentro.add(cbxArtFamID, gbc);
+    cbxArtFamID.setEditable(false);
+    SelectDBLayer dbLayer = new SelectDBLayer(conexionDB);
+    ArrayList<String> familias = dbLayer.getListaFamilias();
+    cbxArtFamID.addItem("");
+    for (String fam : familias) {
+        cbxArtFamID.addItem(fam);
+    }
+
+    //Desabilitar todos los textfields y objetos de informacion
+    habilitacionInfo(false);
+
+    txtArtId.setBorder(null);
+    txtArtNombre.setBorder(null);
+    txtArtDescripcion.setBorder(null);
+    txtArtPrecio.setBorder(null);
+    cbxArtFamID.setBorder(null);
+
+    txtArtId.setBorder(null);
+    txtArtNombre.setBorder(null);
+    txtArtDescripcion.setBorder(null);
+    txtArtPrecio.setBorder(null);
+    cbxArtFamID.setBorder(null);
+
+    // PANEL INFERIOR DERECHO: BOTONES Y RADIOBUTTONS EN COLUMNA
+    JPanel pnlBotones = new JPanel(new GridLayout(0, 1, 0, 10)); // 1 columna, separación vertical de 10px
+    pnlBotones.setBackground(fondo);
 
     // Botón Limpiar
     btnLimpiar = new JButton("LIMPIAR");
@@ -291,6 +283,7 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
     btnDelete.addActionListener(this);
     btnDelete.addMouseListener(this);
     btnDelete.setBackground(Color.decode("#ECF2F9"));
+    btnDelete.setEnabled(false);
     pnlBotones.add(btnDelete);
 
     // Panel auxiliar para margen
@@ -332,77 +325,62 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // TODO Auto-generated method stub
         Object source = e.getSource();
-        
+
         if (source == btnLimpiar) {
             // Limpiar campos
             txtArtId.setText("");
             txtArtNombre.setText("");
             txtArtDescripcion.setText("");
             txtArtPrecio.setText("");
-            cbxArtFamID.setSelectedIndex(-1); // Desmarca cualquier selección
-            ArtTamaños.clearSelection(); // Desmarca los radio buttons
+            cbxArtFamID.setSelectedIndex(-1);
+            ArtTamaños.clearSelection();
+            tblArticulos.clearSelection(); // Deselecciona la tabla
+            btnDelete.setEnabled(false);   // Deshabilita el botón eliminar
+
+            // Deshabilita todos los campos de información
+            habilitacionInfo(false);
+
+            // Deselecciona los radio buttons
+            ButtonGroup group = new ButtonGroup();
+            group.add(RBNuevo);
+            group.add(RBModificar);
+            group.clearSelection();
+
+            repaint();
             return;
         }
-        
+
         if (source == RBNuevo) {
-            // Nuevo registro
-            txtArtId.setEnabled(false);
-            txtArtNombre.setEnabled(true);
-            txtArtDescripcion.setEnabled(true);
-            txtArtPrecio.setEnabled(true);
-            cbxArtFamID.setEnabled(true);
-            rdC.setEnabled(true);
-            rdM.setEnabled(true);
-            rdG.setEnabled(true);
-            
+            habilitacionInfo(true);
+            txtArtId.setEnabled(false); // Si quieres que el ID siga deshabilitado en "Nuevo"
             // Limpiar campos
             txtArtId.setText("*");
-
             txtArtNombre.setText("");
             txtArtDescripcion.setText("");
             txtArtPrecio.setText("");
-            cbxArtFamID.setSelectedIndex(-1); // Desmarca cualquier selección
-            ArtTamaños.clearSelection(); // Desmarca los radio buttons
+            cbxArtFamID.setSelectedIndex(-1);
+            ArtTamaños.clearSelection();
             repaint();
         }
         else if (source == RBModificar) {
-            // Modificar registro
             int filaSeleccionada = tblArticulos.getSelectedRow();
             if (filaSeleccionada != -1) {
+                habilitacionInfo(true);
                 txtArtId.setEnabled(true);
-                txtArtNombre.setEnabled(true);
-                txtArtDescripcion.setEnabled(true);
-                txtArtPrecio.setEnabled(true);
-                cbxArtFamID.setEnabled(true);
-                rdC.setEnabled(true);
-                rdM.setEnabled(true);
-                rdG.setEnabled(true);
-                
-                // Cargar datos en los campos
+                // Cargar datos en los campos...
                 txtArtId.setText(tblArticulos.getValueAt(filaSeleccionada, 0).toString());
                 txtArtNombre.setText(tblArticulos.getValueAt(filaSeleccionada, 1).toString());
                 txtArtDescripcion.setText(tblArticulos.getValueAt(filaSeleccionada, 2).toString());
                 txtArtPrecio.setText(tblArticulos.getValueAt(filaSeleccionada, 3).toString());
-                
-                // Seleccionar familia
-                // cbxArtFamID.setSelectedItem(tblArticulos.getValueAt(filaSeleccionada, 5).toString());
-                cbxArtFamID.setSelectedIndex(-1); // Desmarca cualquier selección
-                
-                // Seleccionar tamaño
+                cbxArtFamID.setSelectedIndex(-1);
                 String tamaño = tblArticulos.getValueAt(filaSeleccionada, 4).toString();
-                ArtTamaños.clearSelection(); // Desmarca los radio buttons
-                if (tamaño.equals("C")) {
-                    rdC.setSelected(true);
-                } else if (tamaño.equals("M")) {
-                    rdM.setSelected(true);
-                } else if (tamaño.equals("G")) {
-                    rdG.setSelected(true);
-                }
+                ArtTamaños.clearSelection();
+                if (tamaño.equals("C")) rdC.setSelected(true);
+                else if (tamaño.equals("M")) rdM.setSelected(true);
+                else if (tamaño.equals("G")) rdG.setSelected(true);
             } else {
-                // Mostrar mensaje de advertencia
-                javax.swing.JOptionPane.showMessageDialog(this, "Seleccione una fila para modificar.", "Advertencia", javax.swing.JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Seleccione una fila para modificar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             }
         }
 
@@ -488,6 +466,17 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
         return camposTextoLlenos && familiaSeleccionada && tamañoSeleccionado;
     }
 
+    public void habilitacionInfo(boolean estado){
+        txtArtId.setEnabled(estado);
+        txtArtNombre.setEnabled(estado);
+        txtArtDescripcion.setEnabled(estado);
+        txtArtPrecio.setEnabled(estado);
+        cbxArtFamID.setEnabled(estado);
+        rdC.setEnabled(estado);
+        rdM.setEnabled(estado);
+        rdG.setEnabled(estado);
+    }
+
     @Override
     public void keyTyped(KeyEvent e) {
         // TODO Auto-generated method stub
@@ -553,7 +542,7 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
         }
         else if (source == txtArtDescripcion) {
             txtArtDescripcion.setBorder(null);
-        }
+        } 
         else if (source == txtArtPrecio) {
             txtArtPrecio.setBorder(null);
         }
@@ -588,6 +577,11 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
         if (selectedRowCount >= 0) {
             actualizarTxtField(selectedRowCount);
             RBModificar.setSelected(true);
+            btnDelete.setEnabled(true); // Habilita el botón eliminar
+            habilitacionInfo(true);     // Habilita los campos al seleccionar una fila
+        } else {
+            btnDelete.setEnabled(false); // Deshabilita si no hay selección
+            habilitacionInfo(false);     // Deshabilita los campos si no hay selección
         }
     }
 
