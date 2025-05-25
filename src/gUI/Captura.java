@@ -16,6 +16,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.util.ArrayList;
 import javax.swing.ButtonGroup;
@@ -34,14 +36,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
-import DataLayer.ChangeDBLayer;
-import DataLayer.ConnectDBLayer;
-import DataLayer.DeleteDBLayer;
-import DataLayer.SelectDBLayer;
 
 
-
-public class Captura extends JFrame implements ActionListener, KeyListener, FocusListener, ListSelectionListener{
+public class Captura extends JFrame implements ActionListener, KeyListener, FocusListener, MouseListener, ListSelectionListener{
 
      private static final long serialVersionUID = 1L;
 
@@ -284,6 +281,7 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
     btnDelete = new JButton("ELIMINAR ");
     btnDelete.setToolTipText("Elimina el cliente seleccionado");
     btnDelete.addActionListener(this);
+    btnDelete.addMouseListener(this);
     btnDelete.setBackground(Color.decode("#ECF2F9"));
     btnDelete.setEnabled(false);
     pnlBotones.add(btnDelete);
@@ -319,7 +317,11 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
     add(pnlPrincipal, BorderLayout.CENTER);
 }
 
-
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'mouseClicked'");
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -350,71 +352,69 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
         }
 
         if (source == RBNuevo) {
-            // Nuevo registro
-            txtArtId.setEnabled(false);
-            txtArtNombre.setEnabled(true);
-            txtArtDescripcion.setEnabled(true);
-            txtArtPrecio.setEnabled(true);
-            cbxArtFamID.setEnabled(true);
-            rdC.setEnabled(true);
-            rdM.setEnabled(true);
-            rdG.setEnabled(true);
-            
+            habilitacionInfo(true);
+            txtArtId.setEnabled(false); // Si quieres que el ID siga deshabilitado en "Nuevo"
             // Limpiar campos
             txtArtId.setText("*");
-
             txtArtNombre.setText("");
             txtArtDescripcion.setText("");
             txtArtPrecio.setText("");
-            cbxArtFamID.setSelectedIndex(-1); // Desmarca cualquier selección
-            ArtTamaños.clearSelection(); // Desmarca los radio buttons
+            cbxArtFamID.setSelectedIndex(-1);
+            ArtTamaños.clearSelection();
             repaint();
         }
         else if (source == RBModificar) {
-            // Modificar registro
             int filaSeleccionada = tblArticulos.getSelectedRow();
             if (filaSeleccionada != -1) {
+                habilitacionInfo(true);
                 txtArtId.setEnabled(true);
-                txtArtNombre.setEnabled(true);
-                txtArtDescripcion.setEnabled(true);
-                txtArtPrecio.setEnabled(true);
-                cbxArtFamID.setEnabled(true);
-                rdC.setEnabled(true);
-                rdM.setEnabled(true);
-                rdG.setEnabled(true);
-                
-                // Cargar datos en los campos
+                // Cargar datos en los campos...
                 txtArtId.setText(tblArticulos.getValueAt(filaSeleccionada, 0).toString());
                 txtArtNombre.setText(tblArticulos.getValueAt(filaSeleccionada, 1).toString());
                 txtArtDescripcion.setText(tblArticulos.getValueAt(filaSeleccionada, 2).toString());
                 txtArtPrecio.setText(tblArticulos.getValueAt(filaSeleccionada, 3).toString());
-                
-                // Seleccionar familia
-                // cbxArtFamID.setSelectedItem(tblArticulos.getValueAt(filaSeleccionada, 5).toString());
-                cbxArtFamID.setSelectedIndex(-1); // Desmarca cualquier selección
-                
-                // Seleccionar tamaño
+                cbxArtFamID.setSelectedIndex(-1);
                 String tamaño = tblArticulos.getValueAt(filaSeleccionada, 4).toString();
-                ArtTamaños.clearSelection(); // Desmarca los radio buttons
-                if (tamaño.equals("C")) {
-                    rdC.setSelected(true);
-                } else if (tamaño.equals("M")) {
-                    rdM.setSelected(true);
-                } else if (tamaño.equals("G")) {
-                    rdG.setSelected(true);
-                }
+                ArtTamaños.clearSelection();
+                if (tamaño.equals("C")) rdC.setSelected(true);
+                else if (tamaño.equals("M")) rdM.setSelected(true);
+                else if (tamaño.equals("G")) rdG.setSelected(true);
             } else {
-                // Mostrar mensaje de advertencia
-                javax.swing.JOptionPane.showMessageDialog(this, "Seleccione una fila para modificar.", "Advertencia", javax.swing.JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Seleccione una fila para modificar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             }
-
-
         }
 
         if(source == btnGrabar){
          if(comprobarCamposLlenos()){
 
-               ChangeDBLayer modify = new ChangeDBLayer(conexionDB, llenarMatrizTexto());
+            String cambios[]=new String[6]; 
+
+            if(txtArtId.getText().equals("*")){
+                 cambios[0] = "0";
+            }else{
+                 cambios[0] = txtArtId.getText();
+            }
+
+            cambios[1]=txtArtNombre.getText();
+
+            cambios[2]=txtArtDescripcion.getText();
+
+            cambios[3]=txtArtPrecio.getText();
+
+
+            if (rdC.isSelected()) {
+                cambios[4]="C";
+            } else if (rdM.isSelected() ) {
+                cambios[4]="M";
+             } else if (rdG.isSelected()) {
+                  cambios[4]="G";
+               }
+            
+               SelectDBLayer fam = new SelectDBLayer(conexionDB);
+               cambios[5]= fam.getFamiliaID(cbxArtFamID.getSelectedItem().toString()) ;
+
+
+               ChangeDBLayer modify = new ChangeDBLayer(conexionDB, cambios);
                dibujarTabla();
 
          }else{
@@ -423,89 +423,13 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
                 "Error", JOptionPane.ERROR_MESSAGE);
 				
          }
-
-        }
-
-        
-         if(source == btnDelete){
-            if(txtArtId.getText().isEmpty()){
-                JOptionPane.showMessageDialog( 
-                null, "Indique el ID del Articulo que desea borrar", 
-                "Error", JOptionPane.ERROR_MESSAGE);
-            }else{
-                int id;
-                try{
-                    id = Integer.parseInt(txtArtId.getText());
-                    DeleteDBLayer deleteLayer = new DeleteDBLayer(conexionDB, id);
-                    dibujarTabla();
-                }catch(NumberFormatException exc){
-                    JOptionPane.showMessageDialog( 
-                null, "Ingrese un ID Valido", 
-                "Error", JOptionPane.ERROR_MESSAGE);
-                }
-                
-            }
-         }
-           
-    }
-
-    private void modoNuevo() {
-        txtArtId.setEnabled(false);
-        txtArtNombre.setEnabled(true);
-        txtArtDescripcion.setEnabled(true);
-        txtArtPrecio.setEnabled(true);
-        cbxArtFamID.setEnabled(true);
-        rdC.setEnabled(true);
-        rdM.setEnabled(true);
-        rdG.setEnabled(true);
-
-        // Limpiar campos
-        txtArtId.setText("*");
-        txtArtNombre.setText("");
-        txtArtDescripcion.setText("");
-        txtArtPrecio.setText("");
-        cbxArtFamID.setSelectedIndex(-1); // Desmarca cualquier selección
-        ArtTamaños.clearSelection(); // Desmarca los radio buttons
-        repaint();
-    }
-
-    private void modoModificar() {
-        int filaSeleccionada = tblArticulos.getSelectedRow();
-        if (filaSeleccionada != -1) {
-            txtArtId.setEnabled(true);
-            txtArtNombre.setEnabled(true);
-            txtArtDescripcion.setEnabled(true);
-            txtArtPrecio.setEnabled(true);
-            cbxArtFamID.setEnabled(true);
-            rdC.setEnabled(true);
-            rdM.setEnabled(true);
-            rdG.setEnabled(true);
-
-            // Cargar datos en los campos
-            txtArtId.setText(tblArticulos.getValueAt(filaSeleccionada, 0).toString());
-            txtArtNombre.setText(tblArticulos.getValueAt(filaSeleccionada, 1).toString());
-            txtArtDescripcion.setText(tblArticulos.getValueAt(filaSeleccionada, 2).toString());
-            txtArtPrecio.setText(tblArticulos.getValueAt(filaSeleccionada, 3).toString());
-
-            // Seleccionar la opción correspondiente en el ComboBox de familia
-            String familia = tblArticulos.getValueAt(filaSeleccionada, 5).toString();
-            cbxArtFamID.setSelectedItem(familia);
             
-            // Seleccionar tamaño
-            String tamaño = tblArticulos.getValueAt(filaSeleccionada, 4).toString();
-            ArtTamaños.clearSelection(); // Desmarca los radio buttons
-            if (tamaño.equals("C")) {
-                rdC.setSelected(true);
-            } else if (tamaño.equals("M")) {
-                rdM.setSelected(true);
-            } else if (tamaño.equals("G")) {
-                rdG.setSelected(true);
-            }
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(this, "Seleccione una fila para modificar.", "Advertencia", javax.swing.JOptionPane.WARNING_MESSAGE);
+            
+
+
+
         }
     }
-
     public boolean comprobarCamposLlenos() {
         
 
@@ -542,19 +466,30 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
         return camposTextoLlenos && familiaSeleccionada && tamañoSeleccionado;
     }
 
+    public void habilitacionInfo(boolean estado){
+        txtArtId.setEnabled(estado);
+        txtArtNombre.setEnabled(estado);
+        txtArtDescripcion.setEnabled(estado);
+        txtArtPrecio.setEnabled(estado);
+        cbxArtFamID.setEnabled(estado);
+        rdC.setEnabled(estado);
+        rdM.setEnabled(estado);
+        rdG.setEnabled(estado);
+    }
+
     @Override
     public void keyTyped(KeyEvent e) {
-    
+        // TODO Auto-generated method stub
         Object source = e.getSource();
         
         if (source == txtArtId) {
-         
+            // Limitar a números
             if (!Character.isDigit(e.getKeyChar())) {
-                e.consume(); 
+                e.consume(); // Ignorar el evento de tecla
             }
         }
         else if (source == txtArtPrecio) {
-        
+            // Limitar a números y punto decimal
             char c = e.getKeyChar();
             if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE || c == '.')) {
                 e.consume();
@@ -564,17 +499,17 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
 
     @Override
     public void keyPressed(KeyEvent e) {
-        
+        // TODO Auto-generated method stub
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        
+        // TODO Auto-generated method stub
     }
 
     @Override
     public void focusGained(FocusEvent e) {
-        
+        // TODO Auto-generated method stub
         Object source = e.getSource();
         
         if (source == txtArtId) {
@@ -596,7 +531,7 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
 
     @Override
     public void focusLost(FocusEvent e) {
-        
+        // TODO Auto-generated method stub
         Object source = e.getSource();
         
         if (source == txtArtId) {
@@ -614,6 +549,26 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
         else if (source == cbxArtFamID) {
             cbxArtFamID.setBorder(null);
         }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        // TODO Auto-generated method stub
     }
 
     @Override
