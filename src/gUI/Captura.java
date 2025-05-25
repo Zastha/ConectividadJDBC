@@ -340,65 +340,9 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
         }
         
         if (source == RBNuevo) {
-            // Nuevo registro
-            txtArtId.setEnabled(false);
-            txtArtNombre.setEnabled(true);
-            txtArtDescripcion.setEnabled(true);
-            txtArtPrecio.setEnabled(true);
-            cbxArtFamID.setEnabled(true);
-            rdC.setEnabled(true);
-            rdM.setEnabled(true);
-            rdG.setEnabled(true);
-            
-            // Limpiar campos
-            txtArtId.setText("*");
-
-            txtArtNombre.setText("");
-            txtArtDescripcion.setText("");
-            txtArtPrecio.setText("");
-            cbxArtFamID.setSelectedIndex(-1); // Desmarca cualquier selección
-            ArtTamaños.clearSelection(); // Desmarca los radio buttons
-            repaint();
-        }
-        else if (source == RBModificar) {
-            // Modificar registro
-            int filaSeleccionada = tblArticulos.getSelectedRow();
-            if (filaSeleccionada != -1) {
-                txtArtId.setEnabled(true);
-                txtArtNombre.setEnabled(true);
-                txtArtDescripcion.setEnabled(true);
-                txtArtPrecio.setEnabled(true);
-                cbxArtFamID.setEnabled(true);
-                rdC.setEnabled(true);
-                rdM.setEnabled(true);
-                rdG.setEnabled(true);
-                
-                // Cargar datos en los campos
-                txtArtId.setText(tblArticulos.getValueAt(filaSeleccionada, 0).toString());
-                txtArtNombre.setText(tblArticulos.getValueAt(filaSeleccionada, 1).toString());
-                txtArtDescripcion.setText(tblArticulos.getValueAt(filaSeleccionada, 2).toString());
-                txtArtPrecio.setText(tblArticulos.getValueAt(filaSeleccionada, 3).toString());
-                
-                // Seleccionar familia
-                // cbxArtFamID.setSelectedItem(tblArticulos.getValueAt(filaSeleccionada, 5).toString());
-                cbxArtFamID.setSelectedIndex(-1); // Desmarca cualquier selección
-                
-                // Seleccionar tamaño
-                String tamaño = tblArticulos.getValueAt(filaSeleccionada, 4).toString();
-                ArtTamaños.clearSelection(); // Desmarca los radio buttons
-                if (tamaño.equals("C")) {
-                    rdC.setSelected(true);
-                } else if (tamaño.equals("M")) {
-                    rdM.setSelected(true);
-                } else if (tamaño.equals("G")) {
-                    rdG.setSelected(true);
-                }
-            } else {
-                // Mostrar mensaje de advertencia
-                javax.swing.JOptionPane.showMessageDialog(this, "Seleccione una fila para modificar.", "Advertencia", javax.swing.JOptionPane.WARNING_MESSAGE);
-            }
-
-
+            modoNuevo();
+        } else if (source == RBModificar) {
+            modoModificar();
         }
 
         if(source == btnGrabar){
@@ -437,6 +381,63 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
             }
          }
            
+    }
+
+    private void modoNuevo() {
+        txtArtId.setEnabled(false);
+        txtArtNombre.setEnabled(true);
+        txtArtDescripcion.setEnabled(true);
+        txtArtPrecio.setEnabled(true);
+        cbxArtFamID.setEnabled(true);
+        rdC.setEnabled(true);
+        rdM.setEnabled(true);
+        rdG.setEnabled(true);
+
+        // Limpiar campos
+        txtArtId.setText("*");
+        txtArtNombre.setText("");
+        txtArtDescripcion.setText("");
+        txtArtPrecio.setText("");
+        cbxArtFamID.setSelectedIndex(-1); // Desmarca cualquier selección
+        ArtTamaños.clearSelection(); // Desmarca los radio buttons
+        repaint();
+    }
+
+    private void modoModificar() {
+        int filaSeleccionada = tblArticulos.getSelectedRow();
+        if (filaSeleccionada != -1) {
+            txtArtId.setEnabled(true);
+            txtArtNombre.setEnabled(true);
+            txtArtDescripcion.setEnabled(true);
+            txtArtPrecio.setEnabled(true);
+            cbxArtFamID.setEnabled(true);
+            rdC.setEnabled(true);
+            rdM.setEnabled(true);
+            rdG.setEnabled(true);
+
+            // Cargar datos en los campos
+            txtArtId.setText(tblArticulos.getValueAt(filaSeleccionada, 0).toString());
+            txtArtNombre.setText(tblArticulos.getValueAt(filaSeleccionada, 1).toString());
+            txtArtDescripcion.setText(tblArticulos.getValueAt(filaSeleccionada, 2).toString());
+            txtArtPrecio.setText(tblArticulos.getValueAt(filaSeleccionada, 3).toString());
+
+            // Seleccionar la opción correspondiente en el ComboBox de familia
+            String familia = tblArticulos.getValueAt(filaSeleccionada, 5).toString();
+            cbxArtFamID.setSelectedItem(familia);
+            
+            // Seleccionar tamaño
+            String tamaño = tblArticulos.getValueAt(filaSeleccionada, 4).toString();
+            ArtTamaños.clearSelection(); // Desmarca los radio buttons
+            if (tamaño.equals("C")) {
+                rdC.setSelected(true);
+            } else if (tamaño.equals("M")) {
+                rdM.setSelected(true);
+            } else if (tamaño.equals("G")) {
+                rdG.setSelected(true);
+            }
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Seleccione una fila para modificar.", "Advertencia", javax.swing.JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     public boolean comprobarCamposLlenos() {
