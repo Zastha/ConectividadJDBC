@@ -24,6 +24,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -438,6 +439,11 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
                ChangeDBLayer modify = new ChangeDBLayer(conexionDB, cambios);
                dibujarTabla();
 
+         }else{
+            	JOptionPane.showMessageDialog( 
+                null, "Por favor llene correctamente todos los campos", 
+                "Error", JOptionPane.ERROR_MESSAGE);
+				
          }
             
             
@@ -447,14 +453,35 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
         }
     }
     public boolean comprobarCamposLlenos() {
-        // Usar trim() para evitar espacios en blanco y equals para comparar Strings
+        
+
+        try {
+            double precio = Double.parseDouble(txtArtPrecio.getText().trim());
+            if (precio <= 0) {
+            JOptionPane.showMessageDialog(
+                null,
+                "El precio debe ser un número positivo.",
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+            );
+            return false;
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(
+            null,
+            "El precio debe ser un número válido.",
+            "Error",
+            JOptionPane.ERROR_MESSAGE
+            );
+            return false;
+        }
         boolean camposTextoLlenos = 
             !txtArtId.getText().trim().isEmpty() &&
             !txtArtNombre.getText().trim().isEmpty() &&
             !txtArtDescripcion.getText().trim().isEmpty() &&
             !txtArtPrecio.getText().trim().isEmpty();
 
-        boolean familiaSeleccionada = cbxArtFamID.getSelectedIndex() > 0; // Primer item es vacío
+        boolean familiaSeleccionada = cbxArtFamID.getSelectedIndex() > 0; 
 
         boolean tamañoSeleccionado = rdG.isSelected() || rdC.isSelected() || rdM.isSelected();
 
