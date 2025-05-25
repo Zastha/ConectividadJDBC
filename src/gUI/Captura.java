@@ -14,8 +14,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.util.ArrayList;
 
@@ -36,7 +34,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import DataLayer.ChangeDBLayer;
-import DataLayer.ConnectDBLayer;
 import DataLayer.DeleteDBLayer;
 import DataLayer.SelectDBLayer;
 
@@ -407,34 +404,7 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
         if(source == btnGrabar){
          if(comprobarCamposLlenos()){
 
-            String cambios[]=new String[6]; 
-
-            if(txtArtId.getText().equals("*")){
-                 cambios[0] = "0";
-            }else{
-                 cambios[0] = txtArtId.getText();
-            }
-
-            cambios[1]=txtArtNombre.getText();
-
-            cambios[2]=txtArtDescripcion.getText();
-
-            cambios[3]=txtArtPrecio.getText();
-
-
-            if (rdC.isSelected()) {
-                cambios[4]="C";
-            } else if (rdM.isSelected() ) {
-                cambios[4]="M";
-             } else if (rdG.isSelected()) {
-                  cambios[4]="G";
-               }
-            
-               SelectDBLayer fam = new SelectDBLayer(conexionDB);
-               cambios[5]= fam.getFamiliaID(cbxArtFamID.getSelectedItem().toString()) ;
-
-
-               ChangeDBLayer modify = new ChangeDBLayer(conexionDB, cambios);
+               ChangeDBLayer modify = new ChangeDBLayer(conexionDB, llenarMatrizTexto());
                dibujarTabla();
 
          }else{
@@ -454,7 +424,6 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
                 "Error", JOptionPane.ERROR_MESSAGE);
             }else{
                 int id;
-
                 try{
                     id = Integer.parseInt(txtArtId.getText());
                     DeleteDBLayer deleteLayer = new DeleteDBLayer(conexionDB, id);
@@ -469,6 +438,7 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
          }
            
     }
+
     public boolean comprobarCamposLlenos() {
         
 
@@ -505,19 +475,50 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
         return camposTextoLlenos && familiaSeleccionada && tamañoSeleccionado;
     }
 
+    public String[] llenarMatrizTexto(){
+           String cambios[]=new String[6]; 
+
+            if(txtArtId.getText().equals("*")){
+                 cambios[0] = "0";
+            }else{
+                 cambios[0] = txtArtId.getText();
+            }
+
+            cambios[1]=txtArtNombre.getText();
+
+            cambios[2]=txtArtDescripcion.getText();
+
+            cambios[3]=txtArtPrecio.getText();
+
+
+            if (rdC.isSelected()) {
+                cambios[4]="C";
+            } else if (rdM.isSelected() ) {
+                cambios[4]="M";
+             } else if (rdG.isSelected()) {
+                  cambios[4]="G";
+               }
+            
+               SelectDBLayer fam = new SelectDBLayer(conexionDB);
+               cambios[5]= fam.getFamiliaID(cbxArtFamID.getSelectedItem().toString()) ;
+
+               return cambios;
+        
+    }
+
     @Override
     public void keyTyped(KeyEvent e) {
-        // TODO Auto-generated method stub
+    
         Object source = e.getSource();
         
         if (source == txtArtId) {
-            // Limitar a números
+         
             if (!Character.isDigit(e.getKeyChar())) {
-                e.consume(); // Ignorar el evento de tecla
+                e.consume(); 
             }
         }
         else if (source == txtArtPrecio) {
-            // Limitar a números y punto decimal
+        
             char c = e.getKeyChar();
             if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE || c == '.')) {
                 e.consume();
@@ -527,17 +528,17 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
 
     @Override
     public void keyPressed(KeyEvent e) {
-        // TODO Auto-generated method stub
+        
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        // TODO Auto-generated method stub
+        
     }
 
     @Override
     public void focusGained(FocusEvent e) {
-        // TODO Auto-generated method stub
+        
         Object source = e.getSource();
         
         if (source == txtArtId) {
@@ -559,7 +560,7 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
 
     @Override
     public void focusLost(FocusEvent e) {
-        // TODO Auto-generated method stub
+        
         Object source = e.getSource();
         
         if (source == txtArtId) {
