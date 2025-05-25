@@ -1,16 +1,14 @@
 package gUI;
 
+import DataLayer.SelectDBLayer;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.Connection;
 import java.util.ArrayList;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import DataLayer.SelectDBLayer;
 
 public class Consulta extends JFrame implements ActionListener, KeyListener, FocusListener, MouseListener, ListSelectionListener {
 
@@ -20,8 +18,7 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
     public static JRadioButton rdC, rdM, rdG;
     public static JTable tblArticulos;
 
-
-    private JButton btnBuscar;
+    private JButton btnBuscar, btnRestablecer;
     private JComboBox<String> cbxArtFamID;
     private JTextField txtArtId, txtArtNombre, txtArtDescripcion, txtArtPrecio;
 
@@ -29,14 +26,14 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
 
     public Consulta(Connection con) {
         super("Consulta");
-          conexionDB =con;
+        conexionDB = con;
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(800, 500);
         setResizable(false);
         setLocationRelativeTo(null);
         InitComponents();
         setVisible(true);
-      
+
     }
 
     private void InitComponents() {
@@ -135,7 +132,6 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
         rdC.setBackground(fondo);
         rdC.setOpaque(false);
         rdC.setEnabled(false);
-        
 
         rdM = new JRadioButton("M");
         rdM.setBackground(fondo);
@@ -167,7 +163,7 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         cbxArtFamID = new JComboBox<>();
-       
+
         cbxArtFamID.setPreferredSize(new Dimension(150, 20));
         pnlCentro.add(cbxArtFamID, gbc);
         cbxArtFamID.setEditable(false);
@@ -175,9 +171,8 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
         ArrayList<String> familias = dbLayer.getListaFamilias();
         cbxArtFamID.addItem("");
         for (String fam : familias) {
-        cbxArtFamID.addItem(fam);
-}
-        
+            cbxArtFamID.addItem(fam);
+        }
 
         txtArtId.setBorder(null);
         txtArtNombre.setBorder(null);
@@ -201,7 +196,6 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
         txtArtPrecio.setDisabledTextColor(Color.BLACK);
         txtArtPrecio.setBackground(disabledBg);
 
-
         // PANEL INFERIOR DERECHO: BOTONES Y RADIOBUTTONS EN COLUMNA
         JPanel pnlBotones = new JPanel(new GridLayout(0, 1, 0, 10));
         pnlBotones.setBackground(fondo);
@@ -215,6 +209,12 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
         btnBuscar.addActionListener(this);
         btnBuscar.setBackground(Color.decode("#ECF2F9"));
         pnlBotones.add(btnBuscar);
+
+        btnRestablecer = new JButton("RESTABLECER");
+        btnRestablecer.setToolTipText("Restablecer Tabla");
+        btnRestablecer.addActionListener(this);
+        btnRestablecer.setBackground(Color.decode("#ECF2F9"));
+        pnlBotones.add(btnRestablecer);
 
         // Panel auxiliar para margen
         JPanel pnlBotonesConMargen = new JPanel(new BorderLayout());
@@ -256,90 +256,113 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == btnBuscar){
-            if(!txtArtId.getText().isEmpty()){
+        if (e.getSource() == btnBuscar) {
+            if (!txtArtId.getText().isEmpty()) {
 
-                if(cbxArtFamID.getSelectedItem().toString().isEmpty()){
+                if (cbxArtFamID.getSelectedItem().toString().isEmpty()) {
                     selectID(Integer.parseInt(txtArtId.getText()));
-                
-                    
-                }else{
+
+                } else {
                     JOptionPane.showMessageDialog(this, "Solo se permite utilizar un parametro de busqueda", "Comprobar Borrado", JOptionPane.ERROR_MESSAGE);
                 }
 
-            }else if(!cbxArtFamID.getSelectedItem().toString().isEmpty()){
-            selectFamID(cbxArtFamID.getSelectedItem().toString());
+            } else if (!cbxArtFamID.getSelectedItem().toString().isEmpty()) {
+                selectFamID(cbxArtFamID.getSelectedItem().toString());
 
             }
+        }
 
+        if(e.getSource() == btnRestablecer){
+            ArticulosModel jtArticulos = new ArticulosModel(conexionDB);
+            tblArticulos.setModel(jtArticulos);
+            tblArticulos.getSelectionModel().addListSelectionListener(this);
+
+            txtArtId.setText("");
+            txtArtNombre.setText("");
+            txtArtDescripcion.setText("");
+            txtArtPrecio.setText("");
+            rdC.setSelected(false);
+            rdM.setSelected(false);
+            rdG.setSelected(false);
+            cbxArtFamID.setSelectedIndex(0);
+
+            repaint();
         }
     }
 
-    public void selectID(int id){
-    ArticulosModel jtArticulos = new ArticulosModel(conexionDB, id);
-    if (jtArticulos.getRowCount() == 0) {
-        JOptionPane.showMessageDialog(this, "El artículo con ese ID no existe.", "No encontrado", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-    tblArticulos.setModel(jtArticulos);
-    tblArticulos.getSelectionModel().addListSelectionListener(this);
-    actualizarTxtField(0);
-    repaint();
+    public void selectID(int id) {
+        ArticulosModel jtArticulos = new ArticulosModel(conexionDB, id);
+        if (jtArticulos.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "El artículo con ese ID no existe.", "No encontrado", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        tblArticulos.setModel(jtArticulos);
+        tblArticulos.getSelectionModel().addListSelectionListener(this);
+        actualizarTxtField(0);
+        repaint();
 
     }
 
-    public void selectFamID(String familia){
+    public void selectFamID(String familia) {
         ArticulosModel jtArticulos = new ArticulosModel(conexionDB, familia);
         tblArticulos.setModel(jtArticulos); // Cambia el modelo de la tabla existente
         tblArticulos.getSelectionModel().addListSelectionListener(this);
-         
-       repaint();
-    
+
+        repaint();
 
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {}
+    public void keyTyped(KeyEvent e) {
+    }
 
     @Override
-    public void keyPressed(KeyEvent e) {}
+    public void keyPressed(KeyEvent e) {
+    }
 
     @Override
-    public void keyReleased(KeyEvent e) {}
+    public void keyReleased(KeyEvent e) {
+    }
 
     @Override
-    public void focusGained(FocusEvent e) {}
+    public void focusGained(FocusEvent e) {
+    }
 
     @Override
-    public void focusLost(FocusEvent e) {}
+    public void focusLost(FocusEvent e) {
+    }
 
     @Override
-    public void mouseClicked(MouseEvent e) {}
+    public void mouseClicked(MouseEvent e) {
+    }
 
     @Override
-    public void mousePressed(MouseEvent e) {}
+    public void mousePressed(MouseEvent e) {
+    }
 
     @Override
-    public void mouseReleased(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {
+    }
 
     @Override
-    public void mouseEntered(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {
+    }
 
     @Override
-    public void mouseExited(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {
+    }
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
         int selectedRowCount = tblArticulos.getSelectedRow();
         actualizarTxtField(selectedRowCount);
 
-      
     }
 
-    public void actualizarTxtField(int filaSelect){
+    public void actualizarTxtField(int filaSelect) {
         int id = (int) tblArticulos.getValueAt(filaSelect, 0);
         txtArtId.setText(String.valueOf(id));
-        
+
         String nombre = (String) tblArticulos.getValueAt(filaSelect, 1);
         txtArtNombre.setText(String.valueOf(nombre));
 
@@ -350,20 +373,18 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
         txtArtPrecio.setText(String.valueOf(precio));
 
         String size = (String) tblArticulos.getValueAt(filaSelect, 4);
-        if(size.charAt(0)=='C'){
+        if (size.charAt(0) == 'C') {
             rdC.setSelected(true);
-        }else if(size.charAt(0)=='M'){
+        } else if (size.charAt(0) == 'M') {
             rdM.setSelected(true);
-        }else if(size.charAt(0)=='G'){
+        } else if (size.charAt(0) == 'G') {
             rdG.setSelected(true);
         }
-        
 
         String familia = (String) tblArticulos.getValueAt(filaSelect, 5);
         cbxArtFamID.setSelectedItem(familia);
-        
 
-          repaint();
+        repaint();
 
     }
 
