@@ -18,6 +18,7 @@ public class ConnectDBLayer {
         } catch (ClassNotFoundException e) {
             System.err.println("Error conectandose con SQL Server");
             e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(null, "Error de base de datos:\n" + e.getMessage(), "Error SQL", javax.swing.JOptionPane.ERROR_MESSAGE);
 
         }
 
@@ -30,8 +31,6 @@ public class ConnectDBLayer {
         }catch (SQLException e){
             System.out.println(e.getErrorCode());
             mensaje = e.getErrorCode();
-
-
 
         }
 

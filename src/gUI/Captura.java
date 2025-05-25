@@ -17,6 +17,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.Connection;
+import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -29,28 +30,23 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
+import DataLayer.ChangeDBLayer;
 import DataLayer.ConnectDBLayer;
+import DataLayer.SelectDBLayer;
 
 
 
-public class Captura extends JFrame implements ActionListener, KeyListener, FocusListener, MouseListener{
+public class Captura extends JFrame implements ActionListener, KeyListener, FocusListener, MouseListener, ListSelectionListener{
 
      private static final long serialVersionUID = 1L;
 
 	private JButton btnLimpiar, btnGrabar, btnDelete;
     public static JRadioButton RBModificar, RBNuevo, RBM, RBF;
-    
-   
-    /*     
-        artid int not null,
-        artnombre varchar( 50 ) not null, 
-        artdescripcion varchar( 500) not null,
-        artprecio numeric( 12,2) not null,
-        artTamaño char(1) not null, C,M,G
-        famid int not null  
-    */
+
 
     //ARTICULO ATRIBUTOS
     private JTextField txtArtId,txtArtNombre,txtArtDescripcion;
@@ -59,14 +55,15 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
     private JComboBox<String> cbxArtFamID; 
     ButtonGroup ArtTamaños = new ButtonGroup();
     public static JRadioButton rdC,rdM,rdG;
+      Connection conexionDB;
 
     public static JTable tblArticulos;
     private DefaultTableModel tblModel; 
-    Connection con;
+
     
     public Captura(Connection con) {
 		super("Captura");
-         this.con=con;
+           conexionDB = con;
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setSize(800,500);
         setResizable(false);
@@ -87,12 +84,16 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
     pnlPrincipal.setBackground(fondo);
 
     // TABLA DIRECTAMENTE EN EL PANEL PRINCIPAL
-    tblArticulos = new JTable();
-    tblArticulos.getTableHeader().setBackground(Color.decode("#133E87"));
-    tblArticulos.getTableHeader().setForeground(Color.WHITE);
-    tblArticulos.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
-    tblArticulos.setFont(new Font("Arial", Font.PLAIN, 12));
-    JScrollPane scrollPane = new JScrollPane(tblArticulos);
+        ArticulosModel jtAriculos = new ArticulosModel(conexionDB);
+        tblArticulos = new JTable(jtAriculos);
+
+        tblArticulos.getSelectionModel().addListSelectionListener(this);
+
+        tblArticulos.getTableHeader().setBackground(Color.decode("#133E87"));
+        tblArticulos.getTableHeader().setForeground(Color.WHITE);
+        tblArticulos.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+        tblArticulos.setFont(new Font("Arial", Font.PLAIN, 12));
+        JScrollPane scrollPane = new JScrollPane(tblArticulos);
 
     // Panel auxiliar para margen
     JPanel pnlTablaConMargen = new JPanel(new BorderLayout());
@@ -129,6 +130,9 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
         gbc.anchor = GridBagConstraints.WEST; // Campo alineado a la izquierda
         txtArtId = new JTextField();
         txtArtId.setPreferredSize(new Dimension(50, 20));
+        txtArtId.setHorizontalAlignment(JTextField.CENTER);
+
+
         txtArtId.addFocusListener(this);
         pnlCentro.add(txtArtId, gbc);
 
@@ -211,9 +215,22 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         cbxArtFamID = new JComboBox<>();
+
         cbxArtFamID.setPreferredSize(new Dimension(150, 20));
         pnlCentro.add(cbxArtFamID, gbc);
         cbxArtFamID.setEditable(false);
+        SelectDBLayer dbLayer = new SelectDBLayer(conexionDB);
+        ArrayList<String> familias = dbLayer.getListaFamilias();
+        cbxArtFamID.addItem("");
+        for (String fam : familias) {
+            cbxArtFamID.addItem(fam);
+        }
+
+        txtArtId.setBorder(null);
+        txtArtNombre.setBorder(null);
+        txtArtDescripcion.setBorder(null);
+        txtArtPrecio.setBorder(null);
+        cbxArtFamID.setBorder(null);
 
         /* No se como agregaremos los tamaños de esto, si habra una tabla o algo
         try {
@@ -330,7 +347,7 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
         
         if (source == RBNuevo) {
             // Nuevo registro
-            txtArtId.setEnabled(true);
+            txtArtId.setEnabled(false);
             txtArtNombre.setEnabled(true);
             txtArtDescripcion.setEnabled(true);
             txtArtPrecio.setEnabled(true);
@@ -340,18 +357,20 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
             rdG.setEnabled(true);
             
             // Limpiar campos
-            txtArtId.setText("");
+            txtArtId.setText("*");
+
             txtArtNombre.setText("");
             txtArtDescripcion.setText("");
             txtArtPrecio.setText("");
             cbxArtFamID.setSelectedIndex(-1); // Desmarca cualquier selección
             ArtTamaños.clearSelection(); // Desmarca los radio buttons
+            repaint();
         }
         else if (source == RBModificar) {
             // Modificar registro
             int filaSeleccionada = tblArticulos.getSelectedRow();
             if (filaSeleccionada != -1) {
-                txtArtId.setEnabled(false);
+                txtArtId.setEnabled(true);
                 txtArtNombre.setEnabled(true);
                 txtArtDescripcion.setEnabled(true);
                 txtArtPrecio.setEnabled(true);
@@ -385,6 +404,61 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
                 javax.swing.JOptionPane.showMessageDialog(this, "Seleccione una fila para modificar.", "Advertencia", javax.swing.JOptionPane.WARNING_MESSAGE);
             }
         }
+
+        if(source == btnGrabar){
+         if(comprobarCamposLlenos()){
+
+            String cambios[]=new String[6]; 
+
+            if(txtArtId.getText().equals("*")){
+                 cambios[0] = "0";
+            }else{
+                 cambios[0] = txtArtId.getText();
+            }
+
+            cambios[1]=txtArtNombre.getText();
+
+            cambios[2]=txtArtDescripcion.getText();
+
+            cambios[3]=txtArtPrecio.getText();
+
+
+            if (rdC.isSelected()) {
+                cambios[4]="C";
+            } else if (rdM.isSelected() ) {
+                cambios[4]="M";
+             } else if (rdG.isSelected()) {
+                  cambios[4]="G";
+               }
+            
+               SelectDBLayer fam = new SelectDBLayer(conexionDB);
+               cambios[5]= fam.getFamiliaID(cbxArtFamID.getSelectedItem().toString()) ;
+
+
+               ChangeDBLayer modify = new ChangeDBLayer(conexionDB, cambios);
+               dibujarTabla();
+
+         }
+            
+            
+
+
+
+        }
+    }
+    public boolean comprobarCamposLlenos() {
+        // Usar trim() para evitar espacios en blanco y equals para comparar Strings
+        boolean camposTextoLlenos = 
+            !txtArtId.getText().trim().isEmpty() &&
+            !txtArtNombre.getText().trim().isEmpty() &&
+            !txtArtDescripcion.getText().trim().isEmpty() &&
+            !txtArtPrecio.getText().trim().isEmpty();
+
+        boolean familiaSeleccionada = cbxArtFamID.getSelectedIndex() > 0; // Primer item es vacío
+
+        boolean tamañoSeleccionado = rdG.isSelected() || rdC.isSelected() || rdM.isSelected();
+
+        return camposTextoLlenos && familiaSeleccionada && tamañoSeleccionado;
     }
 
     @Override
@@ -479,5 +553,52 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
     @Override
     public void mouseExited(MouseEvent e) {
         // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void valueChanged(ListSelectionEvent e) {
+        int selectedRowCount = tblArticulos.getSelectedRow();
+        if (selectedRowCount >= 0) {
+            actualizarTxtField(selectedRowCount);
+            RBModificar.setSelected(true);
+        }
+    }
+
+    public void actualizarTxtField(int filaSelect) {
+        int id = (int) tblArticulos.getValueAt(filaSelect, 0);
+        txtArtId.setText(String.valueOf(id));
+
+        String nombre = (String) tblArticulos.getValueAt(filaSelect, 1);
+        txtArtNombre.setText(String.valueOf(nombre));
+
+        String descripcion = (String) tblArticulos.getValueAt(filaSelect, 2);
+        txtArtDescripcion.setText(String.valueOf(descripcion));
+
+        double precio = (double) tblArticulos.getValueAt(filaSelect, 3);
+        txtArtPrecio.setText(String.valueOf(precio));
+
+        String size = (String) tblArticulos.getValueAt(filaSelect, 4);
+        if (size.charAt(0) == 'C') {
+            rdC.setSelected(true);
+        } else if (size.charAt(0) == 'M') {
+            rdM.setSelected(true);
+        } else if (size.charAt(0) == 'G') {
+            rdG.setSelected(true);
+        }
+
+        String familia = (String) tblArticulos.getValueAt(filaSelect, 5);
+        cbxArtFamID.setSelectedItem(familia);
+
+        repaint();
+
+    }
+
+
+    public void dibujarTabla(){
+         ArticulosModel jtArticulos = new ArticulosModel(conexionDB);
+            tblArticulos.setModel(jtArticulos);
+            tblArticulos.getSelectionModel().addListSelectionListener(this);
+            repaint();
+
     }
 }

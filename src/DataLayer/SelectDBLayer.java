@@ -28,7 +28,7 @@ public class SelectDBLayer {
                 datos.add(fila);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+           javax.swing.JOptionPane.showMessageDialog(null, "Error Generando la tabla de datos:\n" + e.getMessage(), "Error SQL", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
         return datos;
     }
@@ -55,7 +55,7 @@ public class SelectDBLayer {
                 }
 
         }catch (Exception e) {
-                javax.swing.JOptionPane.showMessageDialog(null, "Error de base de datos:\n" + e.getMessage(), "Error SQL", javax.swing.JOptionPane.ERROR_MESSAGE);
+                javax.swing.JOptionPane.showMessageDialog(null, "Error al buscar articulo por id:\n" + e.getMessage(), "Error SQL", javax.swing.JOptionPane.ERROR_MESSAGE);
     e.printStackTrace();
         }
         return articulo;
@@ -81,7 +81,7 @@ public class SelectDBLayer {
                 articulos.add(fila);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+           javax.swing.JOptionPane.showMessageDialog(null, "Error al filtrar por familias:\n" + e.getMessage(), "Error SQL", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
         return articulos;
 
@@ -97,8 +97,25 @@ public class SelectDBLayer {
                 lista.add(rs.getString("famnombre"));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+           javax.swing.JOptionPane.showMessageDialog(null, "Error al buscar listado de familias:\n" + e.getMessage(), "Error SQL", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
         return lista;
+    }
+
+
+    public String getFamiliaID(String famNombre){
+        String famID = "";
+        String sql = "SELECT famid FROM familias WHERE famnombre = ?";
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setString(1, famNombre);
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    famID = rs.getString("famid");
+                }
+            }
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(null, "Error al buscar FamiliaID:\n" + e.getMessage(), "Error SQL", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+        return famID;
     }
 }
