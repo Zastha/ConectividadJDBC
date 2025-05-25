@@ -16,6 +16,7 @@ public class ArticulosModel extends AbstractTableModel {
         public ArticulosModel(Connection con) {
         SelectDBLayer dbLayer = new SelectDBLayer(con);
         this.datos = dbLayer.getArticulos();
+        determineSize();
     }
 
     public ArticulosModel(Connection con, int id){
@@ -23,6 +24,7 @@ public class ArticulosModel extends AbstractTableModel {
             Object[] articulo = dbLayer.getArticuloID(id);
         if (articulo != null) {
         this.datos.add(articulo);
+        determineSize();
     }
 
     }
@@ -30,28 +32,29 @@ public class ArticulosModel extends AbstractTableModel {
     public ArticulosModel(Connection con, String fam){
         SelectDBLayer dbLayer = new SelectDBLayer(con);
         this.datos = dbLayer.getArticuloFam(fam);
+        determineSize();
 
     } 
 
 
-    public String determineSize(String tam){
-        
-
-        if(tam.charAt(0) == 'C'){
-            return "Chico";
+public void determineSize() {
+    for (Object[] articulo : this.datos) {
+        if (articulo[4] instanceof String) {
+            String tam = (String) articulo[4];
+            if (!tam.isEmpty()) {
+                char c = Character.toUpperCase(tam.charAt(0));
+                if (c == 'C') {
+                    articulo[4] = "Chico";
+                } else if (c == 'M') {
+                    articulo[4] = "Mediano";
+                } else if (c == 'G') {
+                    articulo[4] = "Grande";
+                }
+            }
         }
-
-        if(tam.charAt(0) == 'M'){
-            return "Mediano";
-        }
-
-        if(tam.charAt(0)== 'G'){
-            return "Grande";
-        }
-        
-        return tam;
-
     }
+    fireTableDataChanged(); // Notifica a la tabla que los datos cambiaron
+}
 
     @Override
     public int getRowCount() {

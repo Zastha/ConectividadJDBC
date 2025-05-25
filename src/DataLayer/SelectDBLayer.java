@@ -55,7 +55,8 @@ public class SelectDBLayer {
                 }
 
         }catch (Exception e) {
-            e.printStackTrace();
+                javax.swing.JOptionPane.showMessageDialog(null, "Error de base de datos:\n" + e.getMessage(), "Error SQL", javax.swing.JOptionPane.ERROR_MESSAGE);
+    e.printStackTrace();
         }
         return articulo;
 
