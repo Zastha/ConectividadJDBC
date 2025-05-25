@@ -285,9 +285,6 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
     tblArticulos.getSelectionModel().addListSelectionListener(this);
     actualizarTxtField(0);
     repaint();
-    
-
-        
 
     }
 

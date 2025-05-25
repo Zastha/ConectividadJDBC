@@ -115,6 +115,7 @@ public class DlgConfig extends JDialog implements ActionListener{
 		btnCaptura.setBounds(55, 250, 90, 30);
 		btnCaptura.addActionListener(this);
 		btnCaptura.setVisible(true);
+		btnCaptura.setVisible(false);
 		btnCaptura.setBackground(Color.decode("#ECF2F9"));
 		PanelDB.add(btnCaptura);
 
@@ -123,6 +124,7 @@ public class DlgConfig extends JDialog implements ActionListener{
 		btnConsulta.addActionListener(this);
 		btnConsulta.setVisible(true);
 		btnConsulta.setBackground(Color.decode("#ECF2F9"));
+		btnConsulta.setVisible(false); // <-- Cambia a invisible
 		PanelDB.add(btnConsulta);
 
 		lblMsj = new JLabel("");
@@ -150,14 +152,40 @@ public class DlgConfig extends JDialog implements ActionListener{
 		txtBD.setText("Ventas");
 		txtUsuario.setText("Mark");
 		txtContra.setText("123");
+
+				txtServidor.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+			public void insertUpdate(javax.swing.event.DocumentEvent e) { visibilidadBotones(false); }
+			public void removeUpdate(javax.swing.event.DocumentEvent e) { visibilidadBotones(false); }
+			public void changedUpdate(javax.swing.event.DocumentEvent e) { visibilidadBotones(false); }
+		});
+		txtBD.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+			public void insertUpdate(javax.swing.event.DocumentEvent e) { visibilidadBotones(false); }
+			public void removeUpdate(javax.swing.event.DocumentEvent e) { visibilidadBotones(false); }
+			public void changedUpdate(javax.swing.event.DocumentEvent e) { visibilidadBotones(false); }
+		});
+		txtUsuario.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+			public void insertUpdate(javax.swing.event.DocumentEvent e) { visibilidadBotones(false); }
+			public void removeUpdate(javax.swing.event.DocumentEvent e) { visibilidadBotones(false); }
+			public void changedUpdate(javax.swing.event.DocumentEvent e) { visibilidadBotones(false); }
+		});
+		txtContra.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+			public void insertUpdate(javax.swing.event.DocumentEvent e) { visibilidadBotones(false); }
+			public void removeUpdate(javax.swing.event.DocumentEvent e) { visibilidadBotones(false); }
+			public void changedUpdate(javax.swing.event.DocumentEvent e) { visibilidadBotones(false); }
+		});
     }
+
+		public void visibilidadBotones(boolean estado){
+		btnCaptura.setVisible(estado);
+		btnConsulta.setVisible(estado);
+	}
     
     @Override
     public void actionPerformed(ActionEvent e) {
        if (e.getSource() == btnConectar) {
-
-			conexionHandler();
 			
+			
+			visibilidadBotones(conexionHandler());
 		}
 
 		if(e.getSource()==btnLimpiar){
@@ -187,7 +215,7 @@ public class DlgConfig extends JDialog implements ActionListener{
 		}
     }
 
-	public void conexionHandler(){
+	public boolean conexionHandler(){
 		String servidor = txtServidor.getText();
 			String DB = txtBD.getText();
 			String usuario = txtUsuario.getText();
@@ -200,15 +228,17 @@ public class DlgConfig extends JDialog implements ActionListener{
 			if (estado==999){
 				con = conexion.getConexion();
 				exitoso =true;
-				
+				return true;
 			}
         }else{
 
 					JOptionPane.showMessageDialog( 
                 null, "Por favor ingrese correctamente los datos", 
                 "Error", JOptionPane.ERROR_MESSAGE);
+				return false;
 
         }
+		return false;
 
 
 	}

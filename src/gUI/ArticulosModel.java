@@ -53,14 +53,6 @@ public class ArticulosModel extends AbstractTableModel {
 
     }
 
-    public void consultaID(){
-        
-    }
-
-    public void consultaFam(){
-        
-    }
-
     @Override
     public int getRowCount() {
         return datos.size();
