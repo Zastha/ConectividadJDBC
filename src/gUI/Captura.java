@@ -46,9 +46,9 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
     public static JRadioButton RBModificar, RBNuevo, RBM, RBF;
 
 
-    //ARTICULO ATRIBUTOS
+ 
     private JTextField txtArtId,txtArtNombre,txtArtDescripcion;
-	//private JTextFieldDecimal txtArtPrecio;
+
     private JTextField txtArtPrecio;
     private JComboBox<String> cbxArtFamID; 
     ButtonGroup ArtTamaños = new ButtonGroup();
@@ -77,11 +77,11 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
     private void InitCaptura() {
     Color fondo = Color.decode("#d7e7eb");
 
-    // PANEL PRINCIPAL CENTRAL
+
     JPanel pnlPrincipal = new JPanel(new BorderLayout());
     pnlPrincipal.setBackground(fondo);
 
-    // TABLA DIRECTAMENTE EN EL PANEL PRINCIPAL
+
         ArticulosModel jtAriculos = new ArticulosModel(conexionDB);
         tblArticulos = new JTable(jtAriculos);
 
@@ -93,7 +93,7 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
         tblArticulos.setFont(new Font("Arial", Font.PLAIN, 12));
         JScrollPane scrollPane = new JScrollPane(tblArticulos);
 
-    // Panel auxiliar para margen
+
     JPanel pnlTablaConMargen = new JPanel(new BorderLayout());
     pnlTablaConMargen.setBackground(fondo);
     pnlTablaConMargen.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -101,11 +101,11 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
 
     pnlPrincipal.add(pnlTablaConMargen, BorderLayout.CENTER);
 
-    // PANEL DERECHO: FORMULARIO Y BOTONES
+
     JPanel pnlDerecha = new JPanel(new BorderLayout());
     pnlDerecha.setBackground(fondo);
 
-    // Formulario arriba
+
     JPanel pnlCentro = new JPanel();
     pnlCentro.setLayout(new GridBagLayout());
     pnlCentro.setBackground(fondo);
@@ -113,7 +113,7 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
     gbc.fill = GridBagConstraints.HORIZONTAL;
     gbc.insets = new java.awt.Insets(5, 5, 5, 5);
 
-    // === AGREGAR RADIO BUTTONS ARRIBA ===
+
     ButtonGroup group = new ButtonGroup();
     RBNuevo = new JRadioButton("Nuevo");
     RBNuevo.setBackground(fondo);
@@ -130,24 +130,24 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
     pnlRadiosArriba.add(RBNuevo);
     pnlRadiosArriba.add(RBModificar);
 
-    // Agrega el panel de radio buttons en la primera fila
+
     gbc.gridx = 0;
     gbc.gridy = 0;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.WEST;
     pnlCentro.add(pnlRadiosArriba, gbc);
 
-    // === AHORA LOS CAMPOS EMPIEZAN EN LA FILA 1 ===
+
     gbc.gridwidth = 1;
 
     // Fila 1 - ID ARTICULO
     gbc.gridx = 0;
     gbc.gridy = 1;
-    gbc.anchor = GridBagConstraints.EAST; // Etiquetas alineadas a la derecha
+    gbc.anchor = GridBagConstraints.EAST; 
     pnlCentro.add(new JLabel("ArtID: ", JLabel.RIGHT), gbc);
 
     gbc.gridx = 1;
-    gbc.anchor = GridBagConstraints.WEST; // Campo alineado a la izquierda
+    gbc.anchor = GridBagConstraints.WEST;
     txtArtId = new JTextField();
     txtArtId.setPreferredSize(new Dimension(50, 20));
     txtArtId.setHorizontalAlignment(JTextField.CENTER);
@@ -187,7 +187,6 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
     gbc.gridx = 1;
     gbc.anchor = GridBagConstraints.WEST;
     txtArtPrecio = new JTextField();
-    //txtArtPrecio = new JTextFieldDecimal(10,2); // Asegurar que está instanciado
     txtArtPrecio.setPreferredSize(new Dimension(200, 20));
     pnlCentro.add(txtArtPrecio, gbc);
 
@@ -200,18 +199,18 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
 
    // Crear un panel para los radio buttons
     gbc.gridx = 1;
-    JPanel pnlTamaño = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0)); // Espaciado entre botones
+    JPanel pnlTamaño = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0)); 
     rdC = new JRadioButton("C");
     rdC.setBackground(fondo);
-    rdC.setOpaque(false); // Elimina el recuadro gris
+    rdC.setOpaque(false); 
 
     rdM = new JRadioButton("M");
     rdM.setBackground(fondo);
-    rdM.setOpaque(false); // Elimina el recuadro gris
+    rdM.setOpaque(false); 
 
     rdG = new JRadioButton("G");
     rdG.setBackground(fondo);
-    rdG.setOpaque(false); // Elimina el recuadro gris
+    rdG.setOpaque(false);
 
     pnlTamaño.setBackground(fondo);
     ArtTamaños.add(rdC);
@@ -244,7 +243,6 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
         cbxArtFamID.addItem(fam);
     }
 
-    //Desabilitar todos los textfields y objetos de informacion
     habilitacionInfo(false);
 
     txtArtId.setBorder(null);
@@ -260,7 +258,7 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
     cbxArtFamID.setBorder(null);
 
     // PANEL INFERIOR DERECHO: BOTONES Y RADIOBUTTONS EN COLUMNA
-    JPanel pnlBotones = new JPanel(new GridLayout(0, 1, 0, 10)); // 1 columna, separación vertical de 10px
+    JPanel pnlBotones = new JPanel(new GridLayout(0, 1, 0, 10)); 
     pnlBotones.setBackground(fondo);
 
     // Botón Limpiar
@@ -289,10 +287,10 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
     // Panel auxiliar para margen
     JPanel pnlBotonesConMargen = new JPanel(new BorderLayout());
     pnlBotonesConMargen.setBackground(fondo);
-    pnlBotonesConMargen.setBorder(new EmptyBorder(10, 10, 10, 10)); // top, left, bottom, right
+    pnlBotonesConMargen.setBorder(new EmptyBorder(10, 10, 10, 10)); 
     pnlBotonesConMargen.add(pnlBotones, BorderLayout.CENTER);
 
-    // Panel para centrar verticalmente el contenido derecho
+ 
     JPanel pnlDerechaContenido = new JPanel(new GridBagLayout());
     pnlDerechaContenido.setBackground(fondo);
     GridBagConstraints gbcDerecha = new GridBagConstraints();
@@ -307,19 +305,17 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
     gbcDerecha.insets = new java.awt.Insets(10, 0, 0, 0);
     pnlDerechaContenido.add(pnlBotonesConMargen, gbcDerecha);
 
-    // Agrega el panel centrado al centro del panel derecho
     pnlDerecha.add(pnlDerechaContenido, BorderLayout.CENTER);
 
-    // Añadir paneles al principal
-    pnlPrincipal.add(pnlDerecha, BorderLayout.EAST); // Panel derecho a la derecha
+    pnlPrincipal.add(pnlDerecha, BorderLayout.EAST); 
 
-    // Añadir al frame
+
     add(pnlPrincipal, BorderLayout.CENTER);
 }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        // TODO Auto-generated method stub
+
         throw new UnsupportedOperationException("Unimplemented method 'mouseClicked'");
     }
 
@@ -328,20 +324,20 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
         Object source = e.getSource();
 
         if (source == btnLimpiar) {
-            // Limpiar campos
+
             txtArtId.setText("");
             txtArtNombre.setText("");
             txtArtDescripcion.setText("");
             txtArtPrecio.setText("");
             cbxArtFamID.setSelectedIndex(-1);
             ArtTamaños.clearSelection();
-            tblArticulos.clearSelection(); // Deselecciona la tabla
-            btnDelete.setEnabled(false);   // Deshabilita el botón eliminar
+            tblArticulos.clearSelection(); 
+            btnDelete.setEnabled(false);  
 
-            // Deshabilita todos los campos de información
+   
             habilitacionInfo(false);
 
-            // Deselecciona los radio buttons
+  
             ButtonGroup group = new ButtonGroup();
             group.add(RBNuevo);
             group.add(RBModificar);
@@ -353,10 +349,12 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
 
         if (source == RBNuevo) {
             habilitacionInfo(true);
-            txtArtId.setEnabled(false); // Si quieres que el ID siga deshabilitado en "Nuevo"
+            txtArtId.setEditable(false);
             // Limpiar campos
             txtArtId.setText("*");
+            txtArtId.setFont(new Font(txtArtId.getFont().getName(), Font.BOLD, 24)); 
             txtArtNombre.setText("");
+            
             txtArtDescripcion.setText("");
             txtArtPrecio.setText("");
             cbxArtFamID.setSelectedIndex(-1);
@@ -364,11 +362,14 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
             repaint();
         }
         else if (source == RBModificar) {
+             txtArtId.setFont(new Font(txtArtId.getFont().getName(), Font.PLAIN, 12));
+            txtArtId.setEditable(true);
             int filaSeleccionada = tblArticulos.getSelectedRow();
             if (filaSeleccionada != -1) {
                 habilitacionInfo(true);
                 txtArtId.setEnabled(true);
-                // Cargar datos en los campos...
+               
+             
                 txtArtId.setText(tblArticulos.getValueAt(filaSeleccionada, 0).toString());
                 txtArtNombre.setText(tblArticulos.getValueAt(filaSeleccionada, 1).toString());
                 txtArtDescripcion.setText(tblArticulos.getValueAt(filaSeleccionada, 2).toString());
@@ -423,10 +424,6 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
                 "Error", JOptionPane.ERROR_MESSAGE);
 				
          }
-            
-            
-
-
 
         }
     }
@@ -479,17 +476,17 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
 
     @Override
     public void keyTyped(KeyEvent e) {
-        // TODO Auto-generated method stub
+        
         Object source = e.getSource();
         
         if (source == txtArtId) {
-            // Limitar a números
+          
             if (!Character.isDigit(e.getKeyChar())) {
-                e.consume(); // Ignorar el evento de tecla
+                e.consume(); 
             }
         }
         else if (source == txtArtPrecio) {
-            // Limitar a números y punto decimal
+           
             char c = e.getKeyChar();
             if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE || c == '.')) {
                 e.consume();
@@ -499,17 +496,17 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
 
     @Override
     public void keyPressed(KeyEvent e) {
-        // TODO Auto-generated method stub
+        
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        // TODO Auto-generated method stub
+       
     }
 
     @Override
     public void focusGained(FocusEvent e) {
-        // TODO Auto-generated method stub
+        
         Object source = e.getSource();
         
         if (source == txtArtId) {
@@ -531,7 +528,7 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
 
     @Override
     public void focusLost(FocusEvent e) {
-        // TODO Auto-generated method stub
+        
         Object source = e.getSource();
         
         if (source == txtArtId) {
@@ -553,22 +550,22 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
 
     @Override
     public void mousePressed(MouseEvent e) {
-        // TODO Auto-generated method stub
+        
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        // TODO Auto-generated method stub
+        
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        // TODO Auto-generated method stub
+        
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        // TODO Auto-generated method stub
+        
     }
 
     @Override
@@ -577,11 +574,11 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
         if (selectedRowCount >= 0) {
             actualizarTxtField(selectedRowCount);
             RBModificar.setSelected(true);
-            btnDelete.setEnabled(true); // Habilita el botón eliminar
-            habilitacionInfo(true);     // Habilita los campos al seleccionar una fila
+            btnDelete.setEnabled(true); 
+            habilitacionInfo(true);     
         } else {
-            btnDelete.setEnabled(false); // Deshabilita si no hay selección
-            habilitacionInfo(false);     // Deshabilita los campos si no hay selección
+            btnDelete.setEnabled(false); 
+            habilitacionInfo(false);     
         }
     }
 

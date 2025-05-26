@@ -31,10 +31,18 @@ public class ArticulosModel extends AbstractTableModel {
 
     public ArticulosModel(Connection con, String fam){
         SelectDBLayer dbLayer = new SelectDBLayer(con);
-        this.datos = dbLayer.getArticuloFam(fam);
+
+        if(fam.length()>1){
+            this.datos = dbLayer.getArticuloFam(fam);
+        }else{
+            this.datos = dbLayer.getArticuloSize(fam);
+        }
+
+        
         determineSize();
 
     } 
+
 
 
 public void determineSize() {
@@ -53,7 +61,7 @@ public void determineSize() {
             }
         }
     }
-    fireTableDataChanged(); // Notifica a la tabla que los datos cambiaron
+    fireTableDataChanged(); 
 }
 
     @Override

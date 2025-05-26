@@ -197,19 +197,40 @@ public class DlgConfig extends JDialog implements ActionListener{
         }
 	
 		if (e.getSource() == btnConsulta) {
-			if(exitoso){
-				
-				VentConsulta = new Consulta(con);
-				VentConsulta.setVisible(true);
+			if (exitoso) {
+				ConnectDBLayer conexion = new ConnectDBLayer(
+					txtServidor.getText(), txtBD.getText(), txtUsuario.getText(), txtContra.getText()
+				);
+				if (conexion.tienePermisoSelect()) {
+					VentConsulta = new Consulta(con);
+					VentConsulta.setVisible(true);
+				} else {
+					JOptionPane.showMessageDialog(
+						this,
+						"El usuario no tiene permisos de consulta sobre la tabla articulos.",
+						"Permiso denegado",
+						JOptionPane.ERROR_MESSAGE
+					);
+				}
 			}
-		
-			
 		}
 	
 		if (e.getSource() == btnCaptura) {
-			if(exitoso){
-				VentCaptura = new Captura(con);
-			VentCaptura.setVisible(true);
+			if (exitoso) {
+				ConnectDBLayer conexion = new ConnectDBLayer(
+					txtServidor.getText(), txtBD.getText(), txtUsuario.getText(), txtContra.getText()
+				);
+				if (conexion.tienePermisoSelect()) {
+					VentCaptura = new Captura(con);
+					VentCaptura.setVisible(true);
+				} else {
+					JOptionPane.showMessageDialog(
+						this,
+						"El usuario no tiene permisos de consulta sobre la tabla articulos.",
+						"Permiso denegado",
+						JOptionPane.ERROR_MESSAGE
+					);
+				}
 			}
 			
 		}
@@ -249,7 +270,7 @@ public class DlgConfig extends JDialog implements ActionListener{
                 null, "Conexion Exitosa!", 
                 "Conexion Establecida", JOptionPane.INFORMATION_MESSAGE);
 
-				//En caso de ser exitosa se puede hacer la funcionalidad para que aparezcan los botones consulta y modificacion
+		
 				exitoso=true;
 
         }else if(estado == 18456){

@@ -59,7 +59,6 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
         tblArticulos.setFont(new Font("Arial", Font.PLAIN, 12));
         JScrollPane scrollPane = new JScrollPane(tblArticulos);
 
-        // Panel auxiliar para margen
         JPanel pnlTablaConMargen = new JPanel(new BorderLayout());
         pnlTablaConMargen.setBackground(fondo);
         pnlTablaConMargen.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -67,11 +66,10 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
 
         pnlPrincipal.add(pnlTablaConMargen, BorderLayout.CENTER);
 
-        // PANEL DERECHO: FORMULARIO Y BOTONES
+  
         JPanel pnlDerecha = new JPanel(new BorderLayout());
         pnlDerecha.setBackground(fondo);
 
-        // Formulario arriba
         JPanel pnlCentro = new JPanel();
         pnlCentro.setLayout(new GridBagLayout());
         pnlCentro.setBackground(fondo);
@@ -79,7 +77,7 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5);
 
-        // Ejemplo de campos (puedes adaptar según Captura.java)
+
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.EAST;
@@ -130,18 +128,41 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
         JPanel pnlTamaño = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         rdC = new JRadioButton("C");
         rdC.setBackground(fondo);
-        rdC.setOpaque(false);
-        rdC.setEnabled(false);
+        setEnabled(true);
 
         rdM = new JRadioButton("M");
         rdM.setBackground(fondo);
-        rdM.setOpaque(false);
-        rdM.setEnabled(false);
+        rdM.setEnabled(true);
 
         rdG = new JRadioButton("G");
         rdG.setBackground(fondo);
-        rdG.setOpaque(false);
-        rdG.setEnabled(false);
+        rdG.setEnabled(true);
+
+        
+    rdC.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (rdC.isSelected()) {
+                ArtTamaños.clearSelection();
+            }
+        }
+    });
+    rdM.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (rdM.isSelected()) {
+                ArtTamaños.clearSelection();
+            }
+        }
+    });
+    rdG.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (rdG.isSelected()) {
+                ArtTamaños.clearSelection();
+            }
+        }
+    });
 
         pnlTamaño.setBackground(fondo);
         ArtTamaños.add(rdC);
@@ -180,13 +201,12 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
         txtArtPrecio.setBorder(null);
         cbxArtFamID.setBorder(null);
 
-        //deshabilitar los campos sin consulta
+
         txtArtNombre.setEnabled(false);
         txtArtDescripcion.setEnabled(false);
         txtArtPrecio.setEnabled(false);
 
-        // Cambia el fondo para que se vean más oscuras cuando están deshabilitadas
-        Color disabledBg = new Color(180, 180, 180); // Puedes ajustar el tono
+        Color disabledBg = new Color(180, 180, 180);
         txtArtNombre.setDisabledTextColor(Color.BLACK);
         txtArtNombre.setBackground(disabledBg);
 
@@ -200,7 +220,7 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
         JPanel pnlBotones = new JPanel(new GridLayout(0, 1, 0, 10));
         pnlBotones.setBackground(fondo);
 
-        // Panel para los radio buttons en una fila
+  
         JPanel pnlRadios = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         pnlRadios.setBackground(fondo);
 
@@ -216,19 +236,19 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
         btnRestablecer.setBackground(Color.decode("#ECF2F9"));
         pnlBotones.add(btnRestablecer);
 
-        // Panel auxiliar para margen
+
         JPanel pnlBotonesConMargen = new JPanel(new BorderLayout());
         pnlBotonesConMargen.setBackground(fondo);
         pnlBotonesConMargen.setBorder(new EmptyBorder(10, 10, 10, 10));
         pnlBotonesConMargen.add(pnlBotones, BorderLayout.CENTER);
 
-        // Panel auxiliar para margen del botón buscar
+   
         JPanel pnlBuscarConMargen = new JPanel(new FlowLayout(FlowLayout.CENTER));
         pnlBuscarConMargen.setBackground(fondo);
         pnlBuscarConMargen.setBorder(new EmptyBorder(10, 10, 10, 10));
         pnlBuscarConMargen.add(btnBuscar);
 
-        // Panel para centrar verticalmente el contenido derecho
+
         JPanel pnlDerechaContenido = new JPanel(new GridBagLayout());
         pnlDerechaContenido.setBackground(fondo);
         GridBagConstraints gbcDerecha = new GridBagConstraints();
@@ -253,7 +273,7 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
 
         add(pnlPrincipal, BorderLayout.CENTER);
 
-        //lo siento rene :(
+
         txtArtId.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusGained(java.awt.event.FocusEvent e) {
@@ -274,18 +294,21 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnBuscar) {
-            if (!txtArtId.getText().isEmpty()) {
+            if (!txtArtId.getText().isEmpty() ) {
 
-                if (cbxArtFamID.getSelectedItem().toString().isEmpty()) {
+                if (cbxArtFamID.getSelectedItem().toString().isEmpty() && checaRadioButtons()) {
                     selectID(Integer.parseInt(txtArtId.getText()));
 
                 } else {
                     JOptionPane.showMessageDialog(this, "Solo se permite utilizar un parametro de busqueda", "Comprobar Borrado", JOptionPane.ERROR_MESSAGE);
                 }
 
-            } else if (!cbxArtFamID.getSelectedItem().toString().isEmpty()) {
+            } else if (!cbxArtFamID.getSelectedItem().toString().isEmpty() && checaRadioButtons()) {
                 selectFamID(cbxArtFamID.getSelectedItem().toString());
 
+            }else if(!checaRadioButtons()){
+                selectSizeID();
+                
             }
         }
 
@@ -322,11 +345,37 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
 
     public void selectFamID(String familia) {
         ArticulosModel jtArticulos = new ArticulosModel(conexionDB, familia);
-        tblArticulos.setModel(jtArticulos); // Cambia el modelo de la tabla existente
+        tblArticulos.setModel(jtArticulos); 
         tblArticulos.getSelectionModel().addListSelectionListener(this);
 
         repaint();
 
+    }
+
+    public void selectSizeID(){
+            String size = null;
+    if (rdC.isSelected()) {
+        size = "C";
+    } else if (rdM.isSelected()) {
+        size = "M";
+    } else if (rdG.isSelected()) {
+        size = "G";
+    }
+
+    if (size != null) {
+        SelectDBLayer dbLayer = new SelectDBLayer(conexionDB);
+        ArticulosModel jtArticulos = new ArticulosModel(conexionDB,size);
+        tblArticulos.setModel(jtArticulos);
+        tblArticulos.getSelectionModel().addListSelectionListener(this);
+        repaint();
+    } else {
+        JOptionPane.showMessageDialog(this, "Seleccione un tamaño para buscar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+    }
+
+    }
+
+    public boolean checaRadioButtons() {
+        return !rdC.isSelected() && !rdM.isSelected() && !rdG.isSelected();
     }
 
     @Override
@@ -405,5 +454,6 @@ public class Consulta extends JFrame implements ActionListener, KeyListener, Foc
         repaint();
 
     }
+
 
 }

@@ -49,4 +49,13 @@ public class ConnectDBLayer {
         
         return this.conexion;
     }
+
+    public boolean tienePermisoSelect() {
+        try (java.sql.Statement st = conexion.createStatement()) {
+            st.executeQuery("SELECT TOP 1 * FROM articulos");
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

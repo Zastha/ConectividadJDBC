@@ -88,6 +88,31 @@ public class SelectDBLayer {
 
     }
 
+            public List<Object[]> getArticuloSize(String size){
+        List<Object[]> articulos = new ArrayList<>();
+        String sql = "SELECT * FROM articulos a INNER JOIN familias f ON a.famid = f.famid WHERE a.arttamaño= '"+size+"'";
+                System.out.println(size);
+           try (Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                Object[] fila = new Object[] {
+                    rs.getInt("artid"),
+                    rs.getString("artnombre"),
+                    rs.getString("artdescripcion"),
+                    rs.getDouble("artprecio"),
+                    rs.getString("artTamaño"),
+                    rs.getString("famnombre")
+                };
+                articulos.add(fila);
+            }
+        } catch (Exception e) {
+           javax.swing.JOptionPane.showMessageDialog(null, "Error al filtrar por tamaño:\n" + e.getMessage(), "Error SQL", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+        return articulos;
+
+
+    }
+
     public ArrayList<String> getListaFamilias() {
         ArrayList<String> lista = new ArrayList<>();
         String sql = "SELECT famnombre FROM familias";
