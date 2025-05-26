@@ -1,6 +1,7 @@
 package gUI;
 
 import DataLayer.ChangeDBLayer;
+import DataLayer.DeleteDBLayer;
 import DataLayer.SelectDBLayer;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -316,7 +317,7 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
     @Override
     public void mouseClicked(MouseEvent e) {
 
-        throw new UnsupportedOperationException("Unimplemented method 'mouseClicked'");
+
     }
 
     @Override
@@ -426,6 +427,27 @@ public class Captura extends JFrame implements ActionListener, KeyListener, Focu
          }
 
         }
+
+                 if(source == btnDelete){
+            if(txtArtId.getText().isEmpty()){
+                JOptionPane.showMessageDialog( 
+                null, "Indique el ID del Articulo que desea borrar", 
+                "Error", JOptionPane.ERROR_MESSAGE);
+            }else{
+                int id;
+
+                try{
+                    id = Integer.parseInt(txtArtId.getText());
+                    DeleteDBLayer deleteLayer = new DeleteDBLayer(conexionDB, id);
+                    dibujarTabla();
+                }catch(NumberFormatException exc){
+                    JOptionPane.showMessageDialog( 
+                null, "Ingrese un ID Valido", 
+                "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
+            }
+         }
     }
     public boolean comprobarCamposLlenos() {
         
